@@ -1,0 +1,1 @@
+/Users/weliu/workspace/pi-mono/packages/coding-agent/examples/extensions/claude-rules.ts
