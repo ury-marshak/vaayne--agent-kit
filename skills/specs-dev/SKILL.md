@@ -52,7 +52,7 @@ Quality gates: see `references/gates.md`
 
 **Goal:** Implement tasks iteratively with approval-gated review loops.
 
-> 📖 **Read `references/loop.md`** for full state machine and steps.
+> ⚠️ **MANDATORY: You MUST follow `references/loop.md`** — Read and execute the implementation loop exactly as specified. Do not skip or deviate from the defined state machine.
 
 **Summary:** For each task:
 
@@ -60,8 +60,13 @@ Quality gates: see `references/gates.md`
 IMPLEMENTING → VALIDATING → REVIEWING → loop until approved → COMMITTING → DOCUMENTING → NEXT TASK
 ```
 
-- Max 3 iterations per task before escalating to user
-- Subagents: `references/agents/worker.md`, `references/agents/reviewer.md`
+**Required Steps:**
+
+1. **Read `references/loop.md`** before starting any implementation
+2. Follow the state machine transitions exactly
+3. Complete each state's requirements before transitioning
+4. Max 3 iterations per task before escalating to user
+5. Subagents: `references/agents/worker.md`, `references/agents/reviewer.md`
 
 Quality gates: see `references/gates.md`
 
@@ -116,12 +121,12 @@ references/
     └── tasks.md     # Tasks document template
 ```
 
-| File                 | When to Read        |
-| -------------------- | ------------------- |
-| `loop.md`            | Phase 3             |
-| `agents/reviewer.md` | Plan/code reviews   |
-| `agents/worker.md`   | Task implementation |
-| `templates/plan.md`  | Phase 2             |
-| `templates/tasks.md` | Phase 2             |
-| `gates.md`           | Each phase exit     |
-| `help.md`            | When stuck          |
+| File                 | When to Read                      |
+| -------------------- | --------------------------------- |
+| `loop.md`            | Phase 3 (MANDATORY — must follow) |
+| `agents/reviewer.md` | Plan/code reviews                 |
+| `agents/worker.md`   | Task implementation               |
+| `templates/plan.md`  | Phase 2                           |
+| `templates/tasks.md` | Phase 2                           |
+| `gates.md`           | Each phase exit                   |
+| `help.md`            | When stuck                        |
