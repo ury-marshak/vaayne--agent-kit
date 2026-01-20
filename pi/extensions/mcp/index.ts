@@ -26,53 +26,55 @@ export default function mcpExtension(pi: ExtensionAPI) {
   let builtinTools: Tool[] = [];
   let backendTools: BackendTool[] = [];
 
-  pi.on("session_start", async (_event, ctx) => {
-    ctx.ui.notify("MCP: session_start fired", "info");
+  // Lazy initialization state
+  let initPromise: Promise<boolean> | null = null;
+  let isInitialized = false;
 
+  async function initializeMCP(): Promise<boolean> {
     if (!fs.existsSync(CONFIG_PATH)) {
-      ctx.ui.notify(`MCP: config not found at ${CONFIG_PATH}`, "warning");
-      return;
+      return false;
     }
-    ctx.ui.notify(`MCP: config found at ${CONFIG_PATH}`, "info");
 
     // Check mh CLI
-    ctx.ui.notify("MCP: checking for mh CLI...", "info");
     const which = await pi.exec("which", ["mh"], { timeout: 5000 });
     if (which.code !== 0) {
-      ctx.ui.notify("MCP: mh CLI not found", "warning");
-      return;
+      return false;
     }
-    ctx.ui.notify(`MCP: mh CLI found at ${which.stdout.trim()}`, "info");
 
     // Connect
-    ctx.ui.notify("MCP: connecting to server...", "info");
     client = new MCPClient(CONFIG_PATH);
     try {
       await client.connect();
-      ctx.ui.notify("MCP: connected successfully", "info");
 
       // List builtin tools (from MCP protocol)
-      ctx.ui.notify("MCP: listing builtin tools...", "info");
       builtinTools = await client.listTools();
-      ctx.ui.notify(
-        `MCP: found ${builtinTools.length} builtin tools: ${builtinTools.map((t) => t.name).join(", ")}`,
-        "info",
-      );
 
       // List backend tools (from MCP Hub's list tool)
-      ctx.ui.notify("MCP: listing backend tools...", "info");
       backendTools = await client.listBackendTools();
-      ctx.ui.notify(
-        `MCP: found ${backendTools.length} backend tools: ${backendTools.map((t) => t.name).join(", ")}`,
-        "info",
-      );
+
+      return true;
     } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      ctx.ui.notify(`MCP: connection error: ${msg}`, "error");
       client = null;
       builtinTools = [];
       backendTools = [];
+      return false;
     }
+  }
+
+  async function ensureConnected(): Promise<boolean> {
+    if (isInitialized) return client !== null;
+
+    if (!initPromise) {
+      initPromise = initializeMCP();
+    }
+
+    const success = await initPromise;
+    isInitialized = true;
+    return success;
+  }
+
+  pi.on("session_start", async (_event, _ctx) => {
+    // No-op: initialization is now lazy
   });
 
   pi.on("session_shutdown", async (_event, ctx) => {
@@ -96,7 +98,7 @@ export default function mcpExtension(pi: ExtensionAPI) {
     parameters: Type.Object({}),
 
     async execute(_toolCallId, _params, _onUpdate, _ctx, _signal) {
-      if (!client || backendTools.length === 0) {
+      if (!(await ensureConnected()) || backendTools.length === 0) {
         return {
           content: [
             { type: "text", text: "MCP not connected or no tools available" },
@@ -134,7 +136,7 @@ export default function mcpExtension(pi: ExtensionAPI) {
     async execute(_toolCallId, params, _onUpdate, _ctx, _signal) {
       const { tool: toolName } = params as { tool: string };
 
-      if (!client) {
+      if (!(await ensureConnected())) {
         return {
           content: [{ type: "text", text: "MCP not connected" }],
           details: {},
@@ -159,7 +161,7 @@ export default function mcpExtension(pi: ExtensionAPI) {
 
       try {
         // Call MCP Hub's inspect builtin tool
-        const result = await client.inspectTool(toolName);
+        const result = await client!.inspectTool(toolName);
         const text = result.content
           .filter((c) => c.type === "text")
           .map((c) => (c as { type: "text"; text: string }).text)
@@ -203,7 +205,7 @@ export default function mcpExtension(pi: ExtensionAPI) {
         params?: unknown;
       };
 
-      if (!client) {
+      if (!(await ensureConnected())) {
         return {
           content: [{ type: "text", text: "MCP not connected" }],
           details: {},
@@ -239,7 +241,7 @@ export default function mcpExtension(pi: ExtensionAPI) {
           parsedParams = toolParams as Record<string, unknown>;
         }
 
-        const result = await client.callTool(toolName, parsedParams);
+        const result = await client!.callTool(toolName, parsedParams);
 
         // Extract text content from MCP result
         const text = result.content
@@ -280,7 +282,7 @@ export default function mcpExtension(pi: ExtensionAPI) {
     async execute(_toolCallId, params, _onUpdate, _ctx, _signal) {
       const { code } = params as { code: string };
 
-      if (!client) {
+      if (!(await ensureConnected())) {
         return {
           content: [{ type: "text", text: "MCP not connected" }],
           details: {},
