@@ -1,1 +1,0 @@
-/Users/weliu/workspace/pi-mono/packages/coding-agent/examples/extensions/status-line.ts
