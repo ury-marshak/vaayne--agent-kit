@@ -12,45 +12,7 @@
     {
       "name": "specs-dev",
       "description": "Spec-driven feature development workflow with Codex review. Combines iterative requirements gathering, comprehensive planning, and structured implementation with continuous AI-powered code review. Produces production-ready code with proper planning documentation and clean, incremental commits.",
-      "source": "./plugins/specs-dev",
-      "category": "development"
-    },
-    {
-      "name": "specs-dev-skill",
-      "description": "Spec-first planning workflow that produces an approved plan.md before implementation, with reviewer subagent feedback and progress tracking. Use when a user asks for a plan-before-code process, a review-gated implementation plan, or a single plan.md that includes tasks and ongoing progress updates, with commits after each phase.",
-      "source": "./skills/specs-dev",
-      "category": "development"
-    },
-    {
-      "name": "code-analysis",
-      "description": "AI-powered code analysis skills leveraging multiple LLM backends. Includes codex-analyze for deep bug/security/performance analysis with prioritized findings, and gemini-analyze for large-scale codebase pattern detection and architectural overview.",
-      "source": "./skills",
-      "category": "analysis",
-      "strict": false,
-      "skills": ["./codex-analyze", "./gemini-analyze"]
-    },
-    {
-      "name": "python-script",
-      "description": "Python script execution plugin for running Python code and scripts.",
-      "source": "./skills/python-script",
-      "category": "development"
-    },
-    {
-      "name": "web-fetch",
-      "description": "Fetch and extract clean content from URLs using Jina Reader API. Use when users need to read webpage content, extract article text, or fetch URL content for analysis.",
-      "source": "./skills/web-fetch",
-      "category": "utility"
-    },
-    {
-      "name": "web-search",
-      "description": "Search the web using Exa AI for real-time information retrieval. Use when users ask to search online, find current information, look up recent events, or need data beyond knowledge cutoff.",
-      "source": "./skills/web-search",
-      "category": "utility"
-    },
-    {
-      "name": "chrome-devtools-automation",
-      "description": "Automate Chrome DevTools browser actions like navigation, forms, screenshots, and performance traces. Use when users need browser automation or page inspection.",
-      "source": "./skills/chrome-devtools-automation",
+      "source": "./claude-plugins/specs-dev",
       "category": "development"
     }
   ]
