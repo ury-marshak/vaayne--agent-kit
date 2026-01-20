@@ -11,7 +11,7 @@ MCP service at `https://mcp.grep.app` (http) with 1 tool.
 
 - `hub` CLI must be installed. If not available, install with:
   ```bash
-  curl -fsSL https://raw.githubusercontent.com/vaayne/cc-plugins/main/mcps/hub/scripts/install.sh | sh
+  curl -fsSL https://raw.githubusercontent.com/vaayne/agent-kit/main/mcps/hub/scripts/install.sh | sh
   ```
 
 ## Usage

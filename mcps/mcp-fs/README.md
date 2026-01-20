@@ -125,8 +125,8 @@ Using uv is recommended for development as it provides fast dependency managemen
 
 ```bash
 # Clone the repository
-git clone https://github.com/vaayne/cc-plugins
-cd cc-plugins/mcps/mcp-fs
+git clone https://github.com/vaayne/agent-kit
+cd agent-kit/mcps/mcp-fs
 
 # Install dependencies and create virtual environment
 uv sync
@@ -177,8 +177,8 @@ mcp-fs --transport http --config production.json --port 8080
 pip install mcp-fs
 
 # Or install from source
-git clone https://github.com/vaayne/cc-plugins
-cd cc-plugins/mcps/mcp-fs
+git clone https://github.com/vaayne/agent-kit
+cd agent-kit/mcps/mcp-fs
 pip install .
 ```
 

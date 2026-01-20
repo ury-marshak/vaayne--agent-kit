@@ -1,103 +1,57 @@
-# cc-plugins
+# agent-kit
 
-A curated collection of Claude Code plugins and MCP servers for enhanced development workflows.
+Reusable components for AI coding agents: skills, subagents, MCP servers, and extensions.
 
-## Overview
+## What's Inside
 
-This repository provides two types of development tools:
+| Directory                              | Description                             | For             |
+| -------------------------------------- | --------------------------------------- | --------------- |
+| [`skills/`](./skills/)                 | Task-specific instructions (15+ skills) | Pi, Claude Code |
+| [`agents/`](./agents/)                 | Subagent definitions                    | Pi              |
+| [`pi/`](./pi/)                         | Extensions for Pi agent                 | Pi              |
+| [`claude-plugins/`](./claude-plugins/) | Slash command plugins                   | Claude Code     |
+| [`mcps/`](./mcps/)                     | MCP servers                             | Any MCP client  |
 
-- **Claude Code Plugins**: Extend Claude Code with custom slash commands and workflows
-- **MCP Servers**: Standalone Model Context Protocol servers for tool integration
-
-## Plugin Marketplace
-
-### Installation
-
-Install this plugin marketplace in Claude Code:
-
-```bash
-/plugin marketplace add vaayne/cc-plugins
-```
-
-### Available Plugins
-
-#### [specs-dev](./plugins/specs-dev/)
-
-Spec-driven development with Codex review. Features AI-reviewed planning, human approval gates, and structured implementation workflow.
-
-**Commands:** `/specs-dev:plan`, `/specs-dev:impl`
-
-## MCP Servers
-
-Independent MCP servers that can be used with any MCP client.
-
-### [mcp-fs](./mcps/mcp-fs/)
-
-Unified file system access across multiple backends (S3, WebDAV, FTP, local).
+## Quick Start
 
 ```bash
-uvx mcp-fs "fs://"  # Local filesystem
+git clone https://github.com/vaayne/agent-kit.git
+cd agent-kit
 ```
 
-### [mcp-executor](./mcps/mcp-executor/)
-
-MCP tool discovery and execution with CLI interface.
+### Claude Code Plugin Marketplace
 
 ```bash
-uvx mcp-executor list -c mcp.json
+/plugin marketplace add vaayne/agent-kit
 ```
 
-### [mcp-hub](./mcps/mcp-hub/)
-
-MCP server aggregator that combines multiple external MCP servers into a unified search + execute interface, reducing LLM context consumption.
+### Sync to Your Agent
 
 ```bash
-bunx @vaayne/mcp-hub -c config.json -t http -p 23456  # HTTP
-bunx @vaayne/mcp-hub -c config.json                  # stdio
+mise run sync:pi           # Sync skills, agents, extensions to ~/.pi/agent
+mise run sync:claude:skills # Sync skills to ~/.claude/skills
+mise run sync:codex:skills  # Sync skills to ~/.codex/skills
 ```
+
+## Highlights
+
+**Skills** — codex-analyze, gemini-analyze, web-search, frontend-design, specs-dev, and more
+
+**Subagents** — librarian (code research), oracle (architecture advisor), ui-engineer, worker
+
+**MCP Servers** — mcp-fs (unified filesystem: S3, WebDAV, FTP, local)
+
+**Pi Extensions** — notify, handoff, permission-gate, status-line
 
 ## Development
 
-### Prerequisites
-
-- [mise](https://mise.jdx.dev/) - Development environment management
-- [uv](https://github.com/astral-sh/uv) - Python package management
-
-### Quick Start
+Requires [mise](https://mise.jdx.dev/) and [uv](https://github.com/astral-sh/uv).
 
 ```bash
-git clone https://github.com/vaayne/cc-plugins.git
-cd cc-plugins
-mise install
+mise install        # Setup tools
+mise run format     # Format code
 ```
-
-### Project Structure
-
-```
-cc-plugins/
-├── plugins/          # Claude Code plugins
-├── mcps/            # MCP servers
-├── .claude-plugin/  # Marketplace metadata
-├── dprint.json      # Code formatting
-└── mise.toml        # Task automation
-```
-
-See individual directories for detailed development guides.
-
-### Code Quality
-
-```bash
-# Format all code
-mise run format
-```
-
-## Contributing
-
-- **Plugins**: Add to `plugins/` with README documentation
-- **MCP Servers**: Add to `mcps/` with standalone README
-- Run `mise run format` before committing
-- See subdirectories for specific contribution guidelines
 
 ## License
 
-[MIT License](./LICENSE)
+[MIT](./LICENSE)

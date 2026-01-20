@@ -1,9 +1,9 @@
 {
-  "name": "cc-plugins",
+  "name": "agent-kit",
   "description": "A curated collection of Claude Code plugins for enhanced development workflows.",
   "version": "0.0.1",
-  "repository": "https://github.com/vaayne/cc-plugins",
-  "homepage": "https://github.com/vaayne/cc-plugins",
+  "repository": "https://github.com/vaayne/agent-kit",
+  "homepage": "https://github.com/vaayne/agent-kit",
   "owner": {
     "name": "Vaayne",
     "email": "liu.vaayne@mail.com"

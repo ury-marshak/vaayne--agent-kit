@@ -28,9 +28,9 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/vaayne/cc-plugins"
-Repository = "https://github.com/vaayne/cc-plugins"
-Issues = "https://github.com/vaayne/cc-plugins/issues"
+Homepage = "https://github.com/vaayne/agent-kit"
+Repository = "https://github.com/vaayne/agent-kit"
+Issues = "https://github.com/vaayne/agent-kit/issues"
 
 [dependency-groups]
 dev = [

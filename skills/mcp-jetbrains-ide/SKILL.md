@@ -11,7 +11,7 @@ MCP service at `http://127.0.0.1:64342/sse` (sse) with 21 tools.
 
 - `hub` CLI must be installed. If not available, install with:
   ```bash
-  curl -fsSL https://raw.githubusercontent.com/vaayne/cc-plugins/main/mcps/hub/scripts/install.sh | sh
+  curl -fsSL https://raw.githubusercontent.com/vaayne/agent-kit/main/mcps/hub/scripts/install.sh | sh
   ```
 - JetBrains IDE must be running with MCP server enabled
 
