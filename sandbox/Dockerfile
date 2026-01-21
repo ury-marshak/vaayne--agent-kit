@@ -23,7 +23,7 @@ ARG BUN_VERSION=latest
 RUN mise trust -a && \
     mise settings set npm.package_manager bun && \
     mise install && \
-    mise use -g uv@${UV_VERSION} bun@${BUN_VERSION} rg fd node@${NODE_VERSION}
+    mise use -g uv@${UV_VERSION} bun@${BUN_VERSION} rg fd gh node@${NODE_VERSION}
 
 ARG PI_VERSION=latest
 
