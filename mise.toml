@@ -4,14 +4,23 @@ dprint = "latest"
 [tasks.format]
 description = "Format code using dprint"
 run = """
-# Format Python code
-uvx ruff check --fix
+# uvx ruff check --fix
 # Format other supported files using dprint
 dprint fmt
 """
 
 [tasks."sandbox:build"]
 description = "Build agent sandbox image"
+dir = "sandbox"
+run = """
+docker build \
+    -t vaayne/agent-sandbox:latest \
+    -f Dockerfile \
+    .
+"""
+
+[tasks."sandbox:push"]
+description = "Build agent sandbox image and push to registry"
 dir = "sandbox"
 run = """
 docker buildx build --platform linux/amd64,linux/arm64 \

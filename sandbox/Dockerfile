@@ -30,4 +30,4 @@ ARG PI_VERSION=latest
 RUN mise use -g npm:@mariozechner/pi-coding-agent@${PI_VERSION} && \
     mise cache clear
 
-CMD ["mise", "x", "--", "pi"]
+CMD ["bash", "-c", "mise trust && mise exec -- pi"]
