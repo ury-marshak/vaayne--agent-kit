@@ -16,18 +16,9 @@ USER dev
 ENV HOME=/home/dev
 WORKDIR /home/dev/workspace
 
-ARG NODE_VERSION=23
-ARG UV_VERSION=latest
-ARG BUN_VERSION=latest
+COPY mise.toml /home/dev/.config/mise/config.toml
 
-RUN mise trust -a && \
-    mise settings set npm.package_manager bun && \
-    mise install && \
-    mise use -g uv@${UV_VERSION} bun@${BUN_VERSION} rg fd gh node@${NODE_VERSION}
-
-ARG PI_VERSION=latest
-
-RUN mise use -g npm:@mariozechner/pi-coding-agent@${PI_VERSION} && \
+RUN mise install && \
     mise cache clear
 
-CMD ["bash", "-c", "mise trust && mise exec -- pi"]
+CMD ["mise", "exec", "--", "pi"]
