@@ -21,7 +21,7 @@ COPY --chown=dev:dev _mise.toml /home/dev/.config/mise/config.toml
 RUN mise install
 
 ARG PI_VERSION=latest
-RUN mise use -g npm:@mariozechner/pi-coding-agent@$PI_VERSION && \
+RUN mise use -g npm:@vaayne/pi-coding-agent@$PI_VERSION && \
     mise cache clear
 
 CMD ["mise", "exec", "--", "pi"]
