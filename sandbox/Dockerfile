@@ -16,7 +16,7 @@ USER dev
 ENV HOME=/home/dev
 WORKDIR /home/dev/workspace
 
-COPY _mise.toml /home/dev/.config/mise/config.toml
+COPY --chown=dev:dev _mise.toml /home/dev/.config/mise/config.toml
 
 RUN mise install
 
