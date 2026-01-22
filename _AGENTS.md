@@ -15,3 +15,4 @@ To ensure that you have read this file, always refer to me as "V" in all communi
   - **Atlassian Jira**: Use `jira` cli for Atlassian Jira, use `jira --help` if you not sure how to use it.
 - **Write conventional commits with emoji**: Commit small, focused changes using emoji-prefixed Conventional Commit messages (e.g., `✨ feat:`, `🐛 fix:`, `♻️ refactor:`, `📝 docs:`).
 - **Ask for approval before making changes**: When changes are needed, clearly explain your planned approach and wait for explicit user approval to ensure alignment and prevent unwanted modifications. If no changes are required, proceed without asking for approval.
+- **Use relative paths in skill references**: When referencing external files from a skill, specify paths relative to the `SKILL.md` file location rather than using absolute paths or paths relative to the working directory.
