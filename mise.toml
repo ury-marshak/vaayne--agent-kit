@@ -48,18 +48,43 @@ rsync -av ./_AGENTS.md ~/.pi/agent/AGENTS.md
 echo "Synced Pi components to ~/.pi/agent"
 """
 
-[tasks."sync:codex:skills"]
-description = "Sync skills to ~/.codex/skills"
+[tasks."sync:codex"]
+description = "Sync components to ~/.codex"
 run = """
 mkdir -p ~/.codex/skills
 rsync -av --delete ./skills/ ~/.codex/skills/
-echo "Synced skills to ~/.codex/skills"
+rsync -av ./_AGENTS.md ~/.codex/AGENTS.md
+echo "Synced components to ~/.codex"
 """
 
-[tasks."sync:claude:skills"]
-description = "Sync skills to ~/.claude/skills"
+[tasks."sync:claude"]
+description = "Sync components to ~/.claude"
 run = """
 mkdir -p ~/.claude/skills
 rsync -av --delete ./skills/ ~/.claude/skills/
-echo "Synced skills to ~/.claude/skills"
+rsync -av --delete ./agents/ ~/.claude/agents/
+rsync -av --delete ./prompts/ ~/.claude/commands/
+rsync -av ./_AGENTS.md ~/.claude/CLAUDE.md
+echo "Synced components to ~/.claude"
+"""
+
+[tasks."sync:droid"]
+description = "Sync components to ~/.factory"
+run = """
+mkdir -p ~/.factory/skills
+rsync -av --delete ./skills/ ~/.factory/skills/
+rsync -av --delete ./agents/ ~/.factory/droids/
+rsync -av --delete ./prompts/ ~/.factory/commands/
+rsync -av ./_AGENTS.md ~/.factory/CLAUDE.md
+echo "Synced components to ~/.factory"
+"""
+
+[tasks."sync:amp"]
+description = "Sync components to ~/.config/amp"
+run = """
+mkdir -p ~/.config/amp
+# skills read claude skills
+rsync -av --delete ./prompts/ ~/.config/amp/commands/
+rsync -av ./_AGENTS.md ~/.config/amp/CLAUDE.md
+echo "Synced components to ~/.config/amp"
 """
