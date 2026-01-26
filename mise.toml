@@ -29,6 +29,16 @@ docker buildx build --platform linux/amd64,linux/arm64 \
   --push .
 """
 
+[tasks.sync]
+description = "Sync components to various local agent frameworks"
+depends = [
+  "sync:pi",
+  "sync:codex",
+  "sync:claude",
+  "sync:droid",
+  "sync:amp",
+]
+
 [tasks."sync:pi"]
 description = "Sync Pi components to ~/.pi/agent"
 run = """
