@@ -75,7 +75,7 @@ mkdir -p ~/.factory/skills
 rsync -av --delete ./skills/ ~/.factory/skills/
 rsync -av --delete ./agents/ ~/.factory/droids/
 rsync -av --delete ./prompts/ ~/.factory/commands/
-rsync -av ./_AGENTS.md ~/.factory/CLAUDE.md
+rsync -av ./_AGENTS.md ~/.factory/AGENTS.md
 echo "Synced components to ~/.factory"
 """
 
@@ -85,6 +85,6 @@ run = """
 mkdir -p ~/.config/amp
 # skills read claude skills
 rsync -av --delete ./prompts/ ~/.config/amp/commands/
-rsync -av ./_AGENTS.md ~/.config/amp/CLAUDE.md
+rsync -av ./_AGENTS.md ~/.config/amp/AGENTS.md
 echo "Synced components to ~/.config/amp"
 """
