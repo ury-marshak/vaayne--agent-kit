@@ -9,10 +9,12 @@ A curated collection of skills, extensions, and tools for AI coding agents. Work
 ```bash
 # Install from git
 pi install git:github.com/vaayne/agent-kit
+Or via npm
+pi install npm:@vaayne/agent-kit
 
 # Or add to your settings.json
 {
-  "packages": ["git:github.com/vaayne/agent-kit"]
+  "packages": ["git:github.com/vaayne/agent-kit", "npm:@vaayne/agent-kit"]
 }
 ```
 
