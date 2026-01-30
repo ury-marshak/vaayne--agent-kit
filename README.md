@@ -21,8 +21,12 @@ pi install npm:@vaayne/agent-kit
 ### Manual Sync
 
 ```bash
-git clone https://github.com/vaayne/agent-kit.git
+# Clone with submodules
+git clone --recursive https://github.com/vaayne/agent-kit.git
 cd agent-kit
+
+# Or if already cloned without --recursive:
+mise run setup
 
 mise run sync:pi            # Sync to ~/.pi/agent
 mise run sync:claude:skills # Sync to ~/.claude/skills
