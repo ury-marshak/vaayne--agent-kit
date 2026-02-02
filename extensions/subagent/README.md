@@ -49,15 +49,15 @@ Run agents sequentially, passing output to the next step via `{previous}` placeh
 
 ## Parameters
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `agent` | string | No | Agent name (for single mode) |
-| `task` | string | No | Task description (for single mode) |
-| `tasks` | array | No | Array of `{agent, task}` (for parallel mode) |
-| `chain` | array | No | Array of `{agent, task}` (for chain mode) |
-| `cwd` | string | No | Working directory for the agent |
-| `agentScope` | string | No | `user`, `project`, or `both` (default: `user`) |
-| `confirmProjectAgents` | boolean | No | Prompt before running project agents (default: `true`) |
+| Name                   | Type    | Required | Description                                            |
+| ---------------------- | ------- | -------- | ------------------------------------------------------ |
+| `agent`                | string  | No       | Agent name (for single mode)                           |
+| `task`                 | string  | No       | Task description (for single mode)                     |
+| `tasks`                | array   | No       | Array of `{agent, task}` (for parallel mode)           |
+| `chain`                | array   | No       | Array of `{agent, task}` (for chain mode)              |
+| `cwd`                  | string  | No       | Working directory for the agent                        |
+| `agentScope`           | string  | No       | `user`, `project`, or `both` (default: `user`)         |
+| `confirmProjectAgents` | boolean | No       | Prompt before running project agents (default: `true`) |
 
 ## Agent Discovery
 
