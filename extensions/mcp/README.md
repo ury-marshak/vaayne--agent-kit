@@ -45,4 +45,28 @@ Create `~/.pi/agent/mcp.json` to configure MCP servers.
 
 ## Requirements
 
-- `mh` CLI must be installed and available in PATH
+This extension depends on the `mh` CLI from [MCP Hub](https://github.com/vaayne/mcphub).
+
+### Automatic Installation
+
+The `mh` binary is automatically installed during `npm install` via the postinstall script. It will be installed to `~/.local/bin/` (or `$XDG_BIN_HOME` if set).
+
+### Manual Installation
+
+If automatic installation fails, you can install `mh` manually:
+
+```bash
+# Using the install script
+curl -fsSL https://raw.githubusercontent.com/vaayne/mcphub/main/scripts/install.sh | sh
+
+# Or build from source
+git clone https://github.com/vaayne/mcphub.git
+cd mcphub
+go build -o ~/.local/bin/mh .
+```
+
+Ensure `~/.local/bin` is in your PATH:
+
+```bash
+export PATH="$PATH:$HOME/.local/bin"
+```

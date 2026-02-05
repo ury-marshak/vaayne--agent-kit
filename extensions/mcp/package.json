@@ -1,6 +1,6 @@
 {
   "name": "@vaayne/pi-mcp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Pi extension for MCP (Model Context Protocol) server integration",
   "author": "Vaayne <liu.vaayne@gmail.com>",
   "license": "MIT",
@@ -13,17 +13,28 @@
   "bugs": {
     "url": "https://github.com/vaayne/agent-kit/issues"
   },
-  "keywords": ["pi-package", "pi-extension", "mcp", "model-context-protocol", "ai", "agent"],
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "mcp",
+    "model-context-protocol",
+    "ai",
+    "agent"
+  ],
   "type": "module",
   "files": [
     "*.ts",
     "*.md",
+    "scripts/",
     "LICENSE"
   ],
   "pi": {
-    "extensions": ["./index.ts"]
+    "extensions": [
+      "./index.ts"
+    ]
   },
   "scripts": {
+    "postinstall": "node scripts/postinstall.js",
     "lint": "biome lint --write .",
     "format": "biome format --write ."
   },

@@ -5,6 +5,41 @@ import { VERSION } from "@mariozechner/pi-coding-agent";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import type { CallToolResult, Tool } from "@modelcontextprotocol/sdk/types.js";
+import { execSync } from "node:child_process";
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
+
+/**
+ * Find the mh binary path.
+ * First checks if mh is in PATH, then falls back to common install locations.
+ * Returns null if mh is not found anywhere.
+ */
+export function findMhBinary(): string | null {
+  // Check if mh is in PATH
+  try {
+    const result = execSync("which mh", { encoding: "utf-8" }).trim();
+    if (result) return result;
+  } catch {
+    // Not in PATH, try fallback locations
+  }
+
+  // Fallback locations in order of preference
+  const fallbackPaths = [
+    process.env.XDG_BIN_HOME && path.join(process.env.XDG_BIN_HOME, "mh"),
+    path.join(os.homedir(), ".local", "bin", "mh"),
+    "/usr/local/bin/mh",
+  ].filter(Boolean) as string[];
+
+  for (const mhPath of fallbackPaths) {
+    if (fs.existsSync(mhPath)) {
+      return mhPath;
+    }
+  }
+
+  // Not found anywhere
+  return null;
+}
 
 export class MCPClient {
   private configPath: string;
@@ -18,8 +53,15 @@ export class MCPClient {
   async connect(): Promise<void> {
     if (this.client) return;
 
+    const mhPath = findMhBinary();
+    if (!mhPath) {
+      throw new Error(
+        "mh CLI not found. Install it with: curl -fsSL https://raw.githubusercontent.com/vaayne/mcphub/main/scripts/install.sh | sh",
+      );
+    }
+
     this.transport = new StdioClientTransport({
-      command: "mh",
+      command: mhPath,
       args: ["serve", "-t", "stdio", "-c", this.configPath],
       stderr: "pipe",
     });

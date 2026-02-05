@@ -13,12 +13,15 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
-import { MCPClient } from "./client.js";
+import { findMhBinary, MCPClient } from "./client.js";
 
 type BackendTool = { name: string; description: string };
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const CONFIG_PATH = path.join(os.homedir(), ".pi", "agent", "mcp.json");
+const CONFIG_PATH = path.join(
+  process.env.PI_CODING_AGENT_DIR || path.join(os.homedir(), ".pi", "agent"),
+  "mcp.json",
+);
 const EXEC_USAGE_PATH = path.join(__dirname, "exec-usage.md");
 
 export default function mcpExtension(pi: ExtensionAPI) {
@@ -35,9 +38,8 @@ export default function mcpExtension(pi: ExtensionAPI) {
       return false;
     }
 
-    // Check mh CLI
-    const which = await pi.exec("which", ["mh"], { timeout: 5000 });
-    if (which.code !== 0) {
+    // Check mh CLI (in PATH or fallback locations)
+    if (!findMhBinary()) {
       return false;
     }
 
