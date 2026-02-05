@@ -16,26 +16,6 @@ run = """
 dprint fmt
 """
 
-[tasks."sandbox:build"]
-description = "Build agent sandbox image"
-dir = "sandbox"
-run = """
-docker build \
-    -t vaayne/agent-sandbox:latest \
-    -f Dockerfile \
-    .
-"""
-
-[tasks."sandbox:push"]
-description = "Build agent sandbox image and push to registry"
-dir = "sandbox"
-run = """
-docker buildx build --platform linux/amd64,linux/arm64 \
-  -t vaayne/agent-sandbox:latest \
-  -f Dockerfile \
-  --push .
-"""
-
 [tasks.sync]
 description = "Sync components to various local agent frameworks"
 depends = [
@@ -60,7 +40,7 @@ rsync -av --delete ./agents/ ~/.pi/agent/agents/
 rsync -av --delete ./prompts/ ~/.pi/agent/prompts/
 # rsync -av --delete ./skills/ ~/.pi/agent/skills/
 rsync -avL ./skills/ ~/.pi/agent/skills/
-# rsync -av --delete ./pi/extensions/ ~/.pi/agent/extensions/
+rsync -av ./extensions/*.ts ~/.pi/agent/extensions/ || true
 rsync -av ./_AGENTS.md ~/.pi/agent/AGENTS.md
 
 echo "Synced Pi components to ~/.pi/agent"
