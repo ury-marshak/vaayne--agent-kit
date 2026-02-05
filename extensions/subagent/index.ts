@@ -457,7 +457,7 @@ Use the subagent tool to delegate tasks to these specialized agents when appropr
     ].join(" "),
     parameters: SubagentParams,
 
-    async execute(_toolCallId, params, onUpdate, ctx, signal) {
+    async execute(_toolCallId, params, signal, onUpdate, ctx) {
       const agentScope: AgentScope = params.agentScope ?? "user";
       const discovery = discoverAgents(ctx.cwd, agentScope);
       const agents = discovery.agents;
