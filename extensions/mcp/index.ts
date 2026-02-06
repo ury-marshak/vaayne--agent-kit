@@ -3,7 +3,7 @@
  *
  * Connects to MCP server via mh CLI and provides mcp_invoke tool to call MCP tools.
  *
- * Configuration: ~/.pi/agent/mcp.json
+ * Configuration: $PI_CODING_AGENT_DIR/mcp.json (defaults to ~/.pi/agent/mcp.json)
  */
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";

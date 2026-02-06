@@ -41,7 +41,9 @@ Execute JavaScript code to orchestrate multiple MCP tool calls with logic.
 
 ## Configuration
 
-Create `~/.pi/agent/mcp.json` to configure MCP servers.
+Create `mcp.json` in your Pi agent directory to configure MCP servers.
+
+**Config file location:** `$PI_CODING_AGENT_DIR/mcp.json` (defaults to `~/.pi/agent/mcp.json`)
 
 ## Requirements
 
