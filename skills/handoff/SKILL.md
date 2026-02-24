@@ -5,112 +5,68 @@ description: Transfer context to a new focused session. Use when starting a new 
 
 # Handoff
 
-Transfer context to a new focused session by generating a summary prompt.
+Generate a session summary and write it to `handoff.md` so a new session can pick up where this one left off.
 
-## When to Use This Skill
+## Workflow
 
-Use this skill when the user:
+1. **Analyze the current session** — gather goals, progress, decisions, file changes, blockers, and next steps.
+2. **Write `handoff.md`** — save the summary to `handoff.md` in the project root (overwrite if exists).
+3. **Guide the user** — tell the user to start a new session with: `read handoff.md and continue the work`.
 
-- Wants to start a new session but preserve important context
-- Says "handoff to new session" or "transfer this context"
-- Needs to continue work in a fresh conversation
-- Wants a summary of decisions made to hand off to another session
-- Says something like "now implement this for X as well" or "execute phase one"
+## Handoff File Template
 
-## Usage
-
-```
-/handoff <goal for new thread>
-```
-
-Examples:
-
-- `/handoff now implement this for teams as well`
-- `/handoff execute phase one of the plan`
-- `/handoff check other places that need this fix`
-
-## How It Works
-
-When invoked, this skill will:
-
-1. **Analyze the conversation** - Review the current session to identify:
-   - Key decisions made
-   - Approaches taken
-   - Important findings
-   - Files modified or discussed
-
-2. **Generate a focused prompt** - Create a self-contained prompt that includes:
-   - Relevant context summary
-   - List of involved files
-   - Clear statement of the next task
-
-3. **Output the prompt** - Present the generated prompt for the user to:
-   - Copy and start a new session
-   - Edit before using
-   - Share with others
-
-## Generating the Handoff Prompt
-
-When this skill is invoked, generate a handoff prompt following this structure:
-
-### Prompt Format
+Write `handoff.md` using this structure:
 
 ```markdown
-## Context
+# Handoff
 
-[Brief summary of what was worked on and key decisions/findings]
+## Goal
 
-Key decisions:
+[Original objective of this session]
 
-- [Decision 1]
-- [Decision 2]
+## Progress
 
-Files involved:
+- [What was completed]
+- [What was partially done]
 
-- [path/to/file1]
-- [path/to/file2]
+## Key Decisions
 
-## Task
+- [Decision 1 and why]
+- [Decision 2 and why]
 
-[Clear description of what to do next based on the user's goal]
+## Files Changed
+
+- `path/to/file1` — [what changed]
+- `path/to/file2` — [what changed]
+
+## Current State
+
+[Where things stand right now — what works, what doesn't]
+
+## Blockers / Gotchas
+
+- [Any issues, edge cases, or warnings for the next session]
+
+## Next Steps
+
+1. [Concrete next action]
+2. [Follow-up action]
 ```
 
-### Guidelines for Generating the Prompt
+## Guidelines
 
-1. **Be concise** - Include only information relevant to the new task
-2. **Be self-contained** - The new session should be able to proceed without the old conversation
-3. **Focus on decisions** - What was decided, not the full discussion
-4. **List concrete files** - Any files that were modified or will need modification
-5. **State the task clearly** - Use the user's goal to define exactly what should happen next
+- **Be self-contained** — the new session must understand the full picture without the old conversation.
+- **Be concise** — include only what's relevant; skip empty sections.
+- **Focus on decisions and rationale** — what was decided and why, not the full discussion.
+- **List concrete files with context** — path + what changed, not just paths.
+- **State next steps as actionable tasks** — clear enough to execute immediately.
 
-## Example Output
+## After Writing
 
-If the user says `/handoff now implement the same validation for the settings page`:
+Confirm the file was written and instruct the user:
 
-```markdown
-## Context
-
-We implemented form validation for the user profile page using zod schemas with custom error messages. The validation runs on blur and on submit, showing inline errors.
-
-Key decisions:
-
-- Used zod for schema validation
-- Errors shown inline below each field
-- Validation triggers on blur + submit
-
-Files involved:
-
-- src/components/profile/ProfileForm.tsx
-- src/schemas/profile.ts
-- src/hooks/useFormValidation.ts
-
-## Task
-
-Implement the same validation pattern for the settings page. Use the existing `useFormValidation` hook and create a new zod schema for settings fields. The settings form includes email preferences, notification toggles, and timezone selection.
-```
-
-## Tips
-
-- If the conversation is short or simple, the handoff prompt can be brief
-- Include any gotchas or edge cases discovered during the work
-- If there's a plan with multiple phases, reference which phase is being handed off
+> `handoff.md` has been saved. To continue in a new session, start with:
+>
+> ```
+> read handoff.md and continue the work
+> ```
