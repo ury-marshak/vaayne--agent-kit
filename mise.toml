@@ -19,12 +19,45 @@ dprint fmt
 [tasks.sync]
 description = "Sync components to various local agent frameworks"
 depends = [
+  "sync:skills",
   "sync:pi",
   "sync:codex",
   "sync:claude",
   "sync:droid",
   "sync:amp",
 ]
+
+[tasks."sync:skills"]
+description = "Sync all skills (local + remote) to ~/.agents/skills"
+depends = ["sync:skills:local", "sync:skills:remote"]
+
+[tasks."sync:skills:local"]
+description = "Sync local skills to ~/.agents/skills"
+run = """
+mkdir -p ~/.agents/skills
+rsync -avL ./skills/ ~/.agents/skills/ --exclude remote-skills.txt
+echo "Synced local skills to ~/.agents/skills"
+"""
+
+[tasks."sync:skills:remote"]
+description = "Install remote skills from skills/remote-skills.txt"
+run = """
+if [ ! -f ./skills/remote-skills.txt ]; then
+  echo "No remote-skills.txt found, skipping"
+  exit 0
+fi
+
+# Run mh from HOME so skills install to ~/.agents/skills (not project-local)
+while IFS= read -r line; do
+  # Skip blank lines and comments
+  line=$(echo "$line" | sed 's/#.*//' | xargs)
+  [ -z "$line" ] && continue
+  echo "Installing: mh skills add $line"
+  (cd ~ && mh skills add $line)
+done < ./skills/remote-skills.txt
+
+echo "Remote skills synced"
+"""
 
 [tasks."sync:pi"]
 description = "Sync Pi components to ~/.pi/agent"
@@ -38,10 +71,15 @@ done
 
 rsync -av --delete ./agents/ ~/.pi/agent/agents/
 rsync -av --delete ./prompts/ ~/.pi/agent/prompts/
-# rsync -av --delete ./skills/ ~/.pi/agent/skills/
-rsync -avL ./skills/ ~/.pi/agent/skills/
 rsync -av ./extensions/*.ts ~/.pi/agent/extensions/ || true
 rsync -av ./_AGENTS.md ~/.pi/agent/AGENTS.md
+
+# Skills now managed by sync:skills → ~/.agents/skills
+# Remove old skills dir if it exists (migrated)
+if [ -d ~/.pi/agent/skills ] && [ ! -L ~/.pi/agent/skills ]; then
+  rm -rf ~/.pi/agent/skills
+  echo "Removed old ~/.pi/agent/skills (migrated to ~/.agents/skills)"
+fi
 
 echo "Synced Pi components to ~/.pi/agent"
 """
@@ -49,8 +87,6 @@ echo "Synced Pi components to ~/.pi/agent"
 [tasks."sync:codex"]
 description = "Sync components to ~/.codex"
 run = """
-mkdir -p ~/.codex/skills
-rsync -avL --delete ./skills/ ~/.codex/skills/
 rsync -av ./_AGENTS.md ~/.codex/AGENTS.md
 echo "Synced components to ~/.codex"
 """
