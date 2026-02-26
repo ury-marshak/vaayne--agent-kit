@@ -12,7 +12,6 @@
 
 anthropics/skills --skill skill-creator
 anthropics/skills --skill frontend-design
-vercel-labs/agent-skills --skill react-best-practices
 nextlevelbuilder/ui-ux-pro-max-skill --skill ui-ux-pro-max
 vaayne/mcphub --skill find-skills
 vaayne/mcphub --skill mcp-skill-gen
