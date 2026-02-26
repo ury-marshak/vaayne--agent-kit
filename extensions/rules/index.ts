@@ -16,8 +16,7 @@
  */
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { type RuleFile, type ScanResult, scanProjectRules } from "./scanner.js";
-
+import { type RuleFile, scanProjectRules, type ScanResult } from "./scanner.js";
 
 function formatRulesForPrompt(scan: ScanResult): string {
   if (scan.rules.length === 0) {
@@ -67,8 +66,7 @@ export default function rulesExtension(pi: ExtensionAPI) {
     const rulesSection = formatRulesForPrompt(scanResult);
 
     return {
-      systemPrompt:
-        `${event.systemPrompt}
+      systemPrompt: `${event.systemPrompt}
 
 ## Project Rules
 

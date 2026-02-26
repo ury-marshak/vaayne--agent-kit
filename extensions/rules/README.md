@@ -8,10 +8,10 @@ On session start, the extension scans the project directory for rule files. Foun
 
 ## Scanned Locations
 
-| Location | Description |
-| --- | --- |
+| Location         | Description                        |
+| ---------------- | ---------------------------------- |
 | `.claude/rules/` | Claude Code rule files (recursive) |
-| `.agents/rules/` | Agent rule files (recursive) |
+| `.agents/rules/` | Agent rule files (recursive)       |
 
 All `.md` files in the rule directories are discovered recursively, supporting subdirectory organization.
 
