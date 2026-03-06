@@ -15,3 +15,8 @@ anthropics/skills --skill frontend-design
 nextlevelbuilder/ui-ux-pro-max-skill --skill ui-ux-pro-max
 vaayne/mcphub --skill find-skills
 vaayne/mcphub --skill mcp-skill-gen
+blader/humanizer --skill humanizer
+googleworkspace/cli --skill gws-gmail-send
+googleworkspace/cli --skill gws-gmail
+googleworkspace/cli --skill gws-gmail-triage
+googleworkspace/cli --skill gws-gmail-watch
