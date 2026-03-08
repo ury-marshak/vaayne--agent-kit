@@ -20,3 +20,13 @@ googleworkspace/cli --skill gws-gmail-send
 googleworkspace/cli --skill gws-gmail
 googleworkspace/cli --skill gws-gmail-triage
 googleworkspace/cli --skill gws-gmail-watch
+pbakaus/impeccable --skill adapt
+pbakaus/impeccable --skill animate
+pbakaus/impeccable --skill audit
+pbakaus/impeccable --skill clarify
+pbakaus/impeccable --skill colorize
+pbakaus/impeccable --skill critique
+pbakaus/impeccable --skill delight
+pbakaus/impeccable --skill frontend-design
+pbakaus/impeccable --skill optimize
+pbakaus/impeccable --skill polish
