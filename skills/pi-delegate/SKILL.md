@@ -18,22 +18,22 @@ Use Pi as a separate non-interactive subagent when you want fresh context, a dif
 
 Preset agent profiles live in `agents/` relative to this skill. Read the agent file and pass its content via `--append-system-prompt`.
 
-| Agent | Purpose | Model tier | Tool scope |
-|-------|---------|------------|------------|
-| `oracle` | Architecture advice, critique, second opinion | Best (opus/pro/codex) | Read-only |
-| `reviewer` | Code review with structured feedback | Best (opus/pro/codex) | Read-only |
-| `worker` | General-purpose subtask execution | Balanced (sonnet/codex) | Full |
-| `ui-engineer` | Visual/UI design and implementation | Best (pro/opus) | Full |
-| `librarian` | Code search, docs lookup, examples | Fast (flash) | Read-only |
+| Agent | Purpose | Model tier |
+|-------|---------|------------|
+| `oracle` | Architecture advice, critique, second opinion | Best (opus/pro/codex) |
+| `reviewer` | Code review with structured feedback | Best (opus/pro/codex) |
+| `worker` | General-purpose subtask execution | Balanced (sonnet/codex) |
+| `ui-engineer` | Visual/UI design and implementation | Best (pro/opus) |
+| `librarian` | Code search, docs lookup, examples | Fast (flash) |
 
 ### Using a preset agent
 
 1. Read the agent file (e.g. `agents/oracle.md`) to get the system prompt.
 2. Pass it via `--append-system-prompt "$(cat agents/oracle.md)"`.
-3. Set `--model` and `--tools` per the table above.
+3. Set `--model` per the table above.
 
 ```bash
-cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --append-system-prompt "$(cat {skill_dir}/agents/oracle.md)" --model {model} --tools read,grep,glob,ls -p "Your task"
+cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --append-system-prompt "$(cat {skill_dir}/agents/oracle.md)" --model {model} -p "Your task"
 ```
 
 Ad-hoc delegation (no preset) still works — just omit `--append-system-prompt`.
@@ -43,7 +43,6 @@ Ad-hoc delegation (no preset) still works — just omit `--append-system-prompt`
 - Change to the target working directory first (quote paths with spaces).
 - Default to `--offline --no-prompt-templates --no-themes` for reproducible, low-noise runs.
 - Choose a model with: `--model {model}` when model choice matters.
-- For **review-only** tasks, restrict tools: `--tools read,grep,glob,ls` to prevent unintended edits.
 - Use `pi --help` if exact flags are unclear.
 
 ### Fresh run vs continuation
@@ -54,7 +53,7 @@ Ad-hoc delegation (no preset) still works — just omit `--append-system-prompt`
 Pattern (ad-hoc):
 
 ```bash
-cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes [--model {model}] [--tools {tools}] [-c] -p "Your task"
+cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes [--model {model}] [-c] -p "Your task"
 ```
 
 ## Model selection
@@ -106,11 +105,11 @@ If Pi fails or returns unexpected results:
 ## Examples
 
 ```bash
-# Oracle: architecture review (preset agent, read-only)
-cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --append-system-prompt "$(cat {skill_dir}/agents/oracle.md)" --model {opus-model} --tools read,grep,glob,ls -p "Review this architecture and recommend improvements"
+# Oracle: architecture review (preset agent)
+cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --append-system-prompt "$(cat {skill_dir}/agents/oracle.md)" --model {opus-model} -p "Review this architecture and recommend improvements"
 
-# Reviewer: code review (preset agent, read-only)
-cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --append-system-prompt "$(cat {skill_dir}/agents/reviewer.md)" --model {opus-model} --tools read,grep,glob,ls -p "Review the changes in src/auth/ for security issues"
+# Reviewer: code review (preset agent)
+cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --append-system-prompt "$(cat {skill_dir}/agents/reviewer.md)" --model {opus-model} -p "Review the changes in src/auth/ for security issues"
 
 # Worker: general task (preset agent, full tools)
 cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --append-system-prompt "$(cat {skill_dir}/agents/worker.md)" --model {sonnet-model} -p "Refactor the logger module to use structured logging"
