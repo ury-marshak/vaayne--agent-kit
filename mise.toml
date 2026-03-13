@@ -20,11 +20,8 @@ dprint fmt
 description = "Sync components to various local agent frameworks"
 depends = [
   "sync:skills",
+  "sync:agents",
   "sync:pi",
-  "sync:codex",
-  "sync:claude",
-  "sync:droid",
-  "sync:amp",
 ]
 
 [tasks."sync:skills"]
@@ -59,63 +56,21 @@ done < ./skills/remote-skills.txt
 echo "Remote skills synced"
 """
 
-[tasks."sync:pi"]
-description = "Sync Pi components to ~/.pi/agent"
+[tasks."sync:agents"]
+description = "Sync _AGENTS.md to all agent frameworks"
 run = """
-mkdir -p ~/.pi/agent
-
-# Remove symlinks if they exist (migration from old setup)
-for item in agents prompts skills extensions AGENTS.md; do
-  [ -L ~/.pi/agent/$item ] && rm ~/.pi/agent/$item
-done
-
-rsync -av --delete ./prompts/ ~/.pi/agent/prompts/
-rsync -av ./extensions/*.ts ~/.pi/agent/extensions/ || true
 rsync -av ./_AGENTS.md ~/.pi/agent/AGENTS.md
-
-# Skills now managed by sync:skills → ~/.agents/skills
-# Remove old skills dir if it exists (migrated)
-if [ -d ~/.pi/agent/skills ] && [ ! -L ~/.pi/agent/skills ]; then
-  rm -rf ~/.pi/agent/skills
-  echo "Removed old ~/.pi/agent/skills (migrated to ~/.agents/skills)"
-fi
-
-echo "Synced Pi components to ~/.pi/agent"
-"""
-
-[tasks."sync:codex"]
-description = "Sync components to ~/.codex"
-run = """
 rsync -av ./_AGENTS.md ~/.codex/AGENTS.md
-echo "Synced components to ~/.codex"
-"""
-
-[tasks."sync:claude"]
-description = "Sync components to ~/.claude"
-run = """
-mkdir -p ~/.claude/skills
-rsync -avL --delete ./skills/ ~/.claude/skills/
-rsync -av --delete ./prompts/ ~/.claude/commands/
 rsync -av ./_AGENTS.md ~/.claude/CLAUDE.md
-echo "Synced components to ~/.claude"
-"""
-
-[tasks."sync:droid"]
-description = "Sync components to ~/.factory"
-run = """
-mkdir -p ~/.factory/skills
-rsync -avL --delete ./skills/ ~/.factory/skills/
-rsync -av --delete ./prompts/ ~/.factory/commands/
 rsync -av ./_AGENTS.md ~/.factory/AGENTS.md
-echo "Synced components to ~/.factory"
+rsync -av ./_AGENTS.md ~/.config/amp/AGENTS.md
+echo "Synced _AGENTS.md to all frameworks"
 """
 
-[tasks."sync:amp"]
-description = "Sync components to ~/.config/amp"
+[tasks."sync:pi"]
+description = "Sync Pi extensions to ~/.pi/agent"
 run = """
-mkdir -p ~/.config/amp
-# skills read claude skills
-rsync -av --delete ./prompts/ ~/.config/amp/commands/
-rsync -av ./_AGENTS.md ~/.config/amp/AGENTS.md
-echo "Synced components to ~/.config/amp"
+mkdir -p ~/.pi/agent/extensions
+rsync -av ./extensions/*.ts ~/.pi/agent/extensions/ || true
+echo "Synced Pi extensions to ~/.pi/agent"
 """
