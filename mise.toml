@@ -69,7 +69,6 @@ for item in agents prompts skills extensions AGENTS.md; do
   [ -L ~/.pi/agent/$item ] && rm ~/.pi/agent/$item
 done
 
-rsync -av --delete ./agents/ ~/.pi/agent/agents/
 rsync -av --delete ./prompts/ ~/.pi/agent/prompts/
 rsync -av ./extensions/*.ts ~/.pi/agent/extensions/ || true
 rsync -av ./_AGENTS.md ~/.pi/agent/AGENTS.md
@@ -96,7 +95,6 @@ description = "Sync components to ~/.claude"
 run = """
 mkdir -p ~/.claude/skills
 rsync -avL --delete ./skills/ ~/.claude/skills/
-rsync -av --delete ./agents/ ~/.claude/agents/
 rsync -av --delete ./prompts/ ~/.claude/commands/
 rsync -av ./_AGENTS.md ~/.claude/CLAUDE.md
 echo "Synced components to ~/.claude"
@@ -107,7 +105,6 @@ description = "Sync components to ~/.factory"
 run = """
 mkdir -p ~/.factory/skills
 rsync -avL --delete ./skills/ ~/.factory/skills/
-rsync -av --delete ./agents/ ~/.factory/droids/
 rsync -av --delete ./prompts/ ~/.factory/commands/
 rsync -av ./_AGENTS.md ~/.factory/AGENTS.md
 echo "Synced components to ~/.factory"
