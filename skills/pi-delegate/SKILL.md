@@ -1,6 +1,6 @@
 ---
 name: pi-delegate
-description: Use Pi as a non-interactive subagent for delegated tasks. Best when fresh context, model specialization, or isolated task execution is useful.
+description: Delegate tasks to Pi subagents with preset roles (oracle, worker, reviewer, ui-engineer, librarian) or ad-hoc prompts. Use for fresh context, model specialization, second opinions, code review, isolated execution, or parallel task delegation.
 ---
 
 # Pi Delegate
@@ -13,6 +13,30 @@ Use Pi as a separate non-interactive subagent when you want fresh context, a dif
 - you want a different model for the task
 - you want an independent second pass or critique
 - you want to isolate noisy work from the current conversation
+
+## Preset agents
+
+Preset agent profiles live in `agents/` relative to this skill. Read the agent file and pass its content via `--append-system-prompt`.
+
+| Agent | Purpose | Model tier | Tool scope |
+|-------|---------|------------|------------|
+| `oracle` | Architecture advice, critique, second opinion | Best (opus/pro/codex) | Read-only |
+| `reviewer` | Code review with structured feedback | Best (opus/pro/codex) | Read-only |
+| `worker` | General-purpose subtask execution | Balanced (sonnet/codex) | Full |
+| `ui-engineer` | Visual/UI design and implementation | Best (pro/opus) | Full |
+| `librarian` | Code search, docs lookup, examples | Fast (flash) | Read-only |
+
+### Using a preset agent
+
+1. Read the agent file (e.g. `agents/oracle.md`) to get the system prompt.
+2. Pass it via `--append-system-prompt "$(cat agents/oracle.md)"`.
+3. Set `--model` and `--tools` per the table above.
+
+```bash
+cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --append-system-prompt "$(cat {skill_dir}/agents/oracle.md)" --model {model} --tools read,grep,glob,ls -p "Your task"
+```
+
+Ad-hoc delegation (no preset) still works — just omit `--append-system-prompt`.
 
 ## Command rules
 
@@ -27,7 +51,7 @@ Use Pi as a separate non-interactive subagent when you want fresh context, a dif
 - **Fresh run (default):** Start a new isolated session. Use this for independent delegation.
 - **Continuation (`-c`):** Resume the most recent delegated session. Only use when intentionally continuing the same thread — e.g., refining a previous result or adding follow-up instructions to the same task.
 
-Pattern:
+Pattern (ad-hoc):
 
 ```bash
 cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes [--model {model}] [--tools {tools}] [-c] -p "Your task"
@@ -82,14 +106,17 @@ If Pi fails or returns unexpected results:
 ## Examples
 
 ```bash
-# Review-only delegation (restricted tools)
-cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --tools read,grep,glob,ls -p "Review this proposal and give me the top risks and recommended changes"
+# Oracle: architecture review (preset agent, read-only)
+cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --append-system-prompt "$(cat {skill_dir}/agents/oracle.md)" --model {opus-model} --tools read,grep,glob,ls -p "Review this architecture and recommend improvements"
 
-# Specific model for reasoning
+# Reviewer: code review (preset agent, read-only)
+cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --append-system-prompt "$(cat {skill_dir}/agents/reviewer.md)" --model {opus-model} --tools read,grep,glob,ls -p "Review the changes in src/auth/ for security issues"
+
+# Worker: general task (preset agent, full tools)
+cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --append-system-prompt "$(cat {skill_dir}/agents/worker.md)" --model {sonnet-model} -p "Refactor the logger module to use structured logging"
+
+# Ad-hoc delegation (no preset)
 cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --model {sonnet-model} -p "Think through this decision and recommend the best option"
-
-# Second opinion with strongest model
-cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --model {opus-model} -p "Give me a second opinion on this plan"
 
 # Continue a previous delegated session
 cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes -c -p "Refine the recommendation from the previous run"
