@@ -30,3 +30,4 @@ pbakaus/impeccable --skill delight
 pbakaus/impeccable --skill frontend-design
 pbakaus/impeccable --skill optimize
 pbakaus/impeccable --skill polish
+Bin-Huang/camoufox-cli
