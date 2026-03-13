@@ -33,6 +33,13 @@ description = "Sync local skills to ~/.agents/skills"
 run = """
 mkdir -p ~/.agents/skills
 rsync -avL ./skills/ ~/.agents/skills/ --exclude remote-skills.txt
+
+# Claude reads skills from ~/.claude/skills — symlink to shared location
+if [ -d ~/.claude/skills ] && [ ! -L ~/.claude/skills ]; then
+  rm -rf ~/.claude/skills
+fi
+ln -sfn ~/.agents/skills ~/.claude/skills
+
 echo "Synced local skills to ~/.agents/skills"
 """
 
