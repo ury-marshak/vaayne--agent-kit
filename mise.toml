@@ -27,6 +27,7 @@ depends = [
 [tasks."sync:skills"]
 description = "Sync all skills (local + remote) to ~/.agents/skills"
 depends = ["sync:impeccable", "sync:skills:local", "sync:skills:remote"]
+run = "mise run format"
 
 [tasks."sync:impeccable"]
 description = "Clone/update pbakaus/impeccable and save skills locally"
