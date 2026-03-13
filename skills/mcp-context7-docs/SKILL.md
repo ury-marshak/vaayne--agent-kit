@@ -31,10 +31,10 @@ Invoke tool: `mh invoke -u https://mcp.context7.com/mcp -t http <tool-name> '{"p
 
 ## Tools
 
-| Tool | Description |
-| ---- | ----------- |
-| `resolveLibraryId` | Resolves a package/product name to a Context7-compatible library ID. Must be called before `queryDocs` to get a valid library ID. |
-| `queryDocs` | Retrieves and queries up-to-date documentation and code examples from Context7 for any programming library or framework. Requires a Context7-compatible library ID. |
+| Tool               | Description                                                                                                                                                         |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `resolveLibraryId` | Resolves a package/product name to a Context7-compatible library ID. Must be called before `queryDocs` to get a valid library ID.                                   |
+| `queryDocs`        | Retrieves and queries up-to-date documentation and code examples from Context7 for any programming library or framework. Requires a Context7-compatible library ID. |
 
 ## Tool Parameters
 

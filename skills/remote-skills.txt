@@ -11,8 +11,8 @@
 #   https://github.com/anthropics/skills --skill skill-creator
 
 anthropics/skills --skill skill-creator
-anthropics/skills --skill frontend-design
-nextlevelbuilder/ui-ux-pro-max-skill --skill ui-ux-pro-max
+# anthropics/skills --skill frontend-design
+# nextlevelbuilder/ui-ux-pro-max-skill --skill ui-ux-pro-max
 vaayne/mcphub --skill find-skills
 vaayne/mcphub --skill mcp-skill-gen
 blader/humanizer --skill humanizer
@@ -20,14 +20,5 @@ googleworkspace/cli --skill gws-gmail-send
 googleworkspace/cli --skill gws-gmail
 googleworkspace/cli --skill gws-gmail-triage
 googleworkspace/cli --skill gws-gmail-watch
-pbakaus/impeccable --skill adapt
-pbakaus/impeccable --skill animate
-pbakaus/impeccable --skill audit
-pbakaus/impeccable --skill clarify
-pbakaus/impeccable --skill colorize
-pbakaus/impeccable --skill critique
-pbakaus/impeccable --skill delight
-pbakaus/impeccable --skill frontend-design
-pbakaus/impeccable --skill optimize
-pbakaus/impeccable --skill polish
+
 Bin-Huang/camoufox-cli

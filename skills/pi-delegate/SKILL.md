@@ -18,13 +18,13 @@ Use Pi as a separate non-interactive subagent when you want fresh context, a dif
 
 Preset agent profiles live in `agents/` relative to this skill. Read the agent file and pass its content via `--append-system-prompt`.
 
-| Agent | Purpose | Model tier |
-|-------|---------|------------|
-| `oracle` | Architecture advice, critique, second opinion | Best (opus/pro/codex) |
-| `reviewer` | Code review with structured feedback | Best (opus/pro/codex) |
-| `worker` | General-purpose subtask execution | Balanced (sonnet/codex) |
-| `ui-engineer` | Visual/UI design and implementation | Best (pro/opus) |
-| `librarian` | Code search, docs lookup, examples | Fast (flash) |
+| Agent         | Purpose                                       | Model tier              |
+| ------------- | --------------------------------------------- | ----------------------- |
+| `oracle`      | Architecture advice, critique, second opinion | Best (opus/pro/codex)   |
+| `reviewer`    | Code review with structured feedback          | Best (opus/pro/codex)   |
+| `worker`      | General-purpose subtask execution             | Balanced (sonnet/codex) |
+| `ui-engineer` | Visual/UI design and implementation           | Best (pro/opus)         |
+| `librarian`   | Code search, docs lookup, examples            | Fast (flash)            |
 
 ### Using a preset agent
 
@@ -72,11 +72,11 @@ Examples: `pi --list-models`, `pi --list-models gpt`, `pi --list-models claude`,
 
 Pick a model by matching the task to the right family and tier.
 
-| Family | Best | Balanced / Fast | Notes |
-|---------|------|-----------------|-------|
-| **GPT** | Highest version with `codex` (e.g. gpt-5.4-codex) | Highest version without `codex` | `codex` variants are optimized for coding. Non-codex are general purpose. Higher version number = better (5.4 > 5.3). |
-| **Claude** | `opus` | `sonnet` (balanced), `haiku` (fastest) | Opus is most capable, sonnet is strong all-rounder, haiku is cheapest and fastest. |
-| **Gemini** | `pro` | `flash` | Pro is most capable. Flash is fast and cheap. |
+| Family     | Best                                              | Balanced / Fast                        | Notes                                                                                                                 |
+| ---------- | ------------------------------------------------- | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| **GPT**    | Highest version with `codex` (e.g. gpt-5.4-codex) | Highest version without `codex`        | `codex` variants are optimized for coding. Non-codex are general purpose. Higher version number = better (5.4 > 5.3). |
+| **Claude** | `opus`                                            | `sonnet` (balanced), `haiku` (fastest) | Opus is most capable, sonnet is strong all-rounder, haiku is cheapest and fastest.                                    |
+| **Gemini** | `pro`                                             | `flash`                                | Pro is most capable. Flash is fast and cheap.                                                                         |
 
 ### When to pick what
 

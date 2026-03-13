@@ -31,9 +31,9 @@ Invoke tool: `mh invoke -u https://mcp.exa.ai/mcp -t http <tool-name> '{"param":
 
 ## Tools
 
-| Tool | Description |
-| ---- | ----------- |
-| `webSearchExa` | Search the web for any topic and get clean, ready-to-use content. Best for: current information, news, facts, or answering questions about any topic. |
+| Tool                | Description                                                                                                                                                                        |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `webSearchExa`      | Search the web for any topic and get clean, ready-to-use content. Best for: current information, news, facts, or answering questions about any topic.                              |
 | `getCodeContextExa` | Find code examples, documentation, and programming solutions. Searches GitHub, Stack Overflow, and official docs. Best for: API usage, library examples, code snippets, debugging. |
 
 ## Tool Parameters

@@ -32,8 +32,8 @@ Invoke tool: `mh invoke -u https://mcp.grep.app -t http searchGitHub '{"query": 
 
 ## Tools
 
-| Tool | Description |
-| ---- | ----------- |
+| Tool           | Description                                                                                                                 |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `searchGitHub` | Find real-world code examples from public GitHub repositories. Searches for literal code patterns across millions of repos. |
 
 ## Tool Parameters
@@ -56,12 +56,14 @@ Optional:
 ## Search Tips
 
 **Good queries** (literal code patterns):
+
 - `useState(`
 - `import React from`
 - `async function`
 - `(?s)try {.*await`
 
 **Bad queries** (keywords — won't work well):
+
 - `react state management`
 - `how to use hooks`
 
