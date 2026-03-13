@@ -16,46 +16,83 @@ Use Pi as a separate non-interactive subagent when you want fresh context, a dif
 
 ## Command rules
 
-- Change to the target working directory first.
-- Always add: `--offline --no-prompt-templates --no-themes`
+- Change to the target working directory first (quote paths with spaces).
+- Default to `--offline --no-prompt-templates --no-themes` for reproducible, low-noise runs.
 - Choose a model with: `--model {model}` when model choice matters.
-- Use `-c` or `--continue` when repeating the same delegated task.
+- For **review-only** tasks, restrict tools: `--tools read,grep,glob,ls` to prevent unintended edits.
 - Use `pi --help` if exact flags are unclear.
+
+### Fresh run vs continuation
+
+- **Fresh run (default):** Start a new isolated session. Use this for independent delegation.
+- **Continuation (`-c`):** Resume the most recent delegated session. Only use when intentionally continuing the same thread — e.g., refining a previous result or adding follow-up instructions to the same task.
 
 Pattern:
 
 ```bash
-cd /path/to/project && pi --offline --no-prompt-templates --no-themes [--model {model}] [-c] -p "Your task"
+cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes [--model {model}] [--tools {tools}] [-c] -p "Your task"
 ```
 
-## Models
+## Model selection
 
-Most capable:
+Discover available models dynamically — do not rely on memorized model IDs:
 
-- `cx/gpt-5.4`
-- `cc/gemini-3-pro-preview`
-- `cc/claude-opus-4-6`
+```bash
+pi --list-models [search]
+```
 
-Balanced:
+Without `[search]`, lists all available models. With a search term, filters by keyword.
 
-- `cc/claude-sonnet-4-6`
+Examples: `pi --list-models`, `pi --list-models gpt`, `pi --list-models claude`, `pi --list-models gemini`.
 
-Cheap and fast:
+### Selection guide
 
-- `cc/claude-haiku-4-5`
-- `cc/gemini-3-flash-preview`
-- `cx/gpt-5.3-codex-spark`
+Pick a model by matching the task to the right family and tier.
+
+| Family | Best | Balanced / Fast | Notes |
+|---------|------|-----------------|-------|
+| **GPT** | Highest version with `codex` (e.g. gpt-5.4-codex) | Highest version without `codex` | `codex` variants are optimized for coding. Non-codex are general purpose. Higher version number = better (5.4 > 5.3). |
+| **Claude** | `opus` | `sonnet` (balanced), `haiku` (fastest) | Opus is most capable, sonnet is strong all-rounder, haiku is cheapest and fastest. |
+| **Gemini** | `pro` | `flash` | Pro is most capable. Flash is fast and cheap. |
+
+### When to pick what
+
+- **Complex reasoning, planning, critique** — pick the best tier (opus, pro, or highest codex).
+- **Coding tasks** — prefer GPT codex variants or Claude opus/sonnet.
+- **General purpose / balanced** — Claude sonnet or GPT without codex.
+- **Fast, cheap, high-volume** — Claude haiku or Gemini flash.
+- **Vision / image understanding** — Gemini flash is good enough and cost-effective; prefer it over heavier models.
+
+## Execution workflow
+
+1. Run Pi via `bash` and capture stdout.
+2. Read the output — treat it as input for your judgment, not automatic truth.
+3. Summarize findings back into the main task context.
+4. Decide whether to act on, discard, or refine the delegated result.
+
+## Error handling
+
+If Pi fails or returns unexpected results:
+
+1. Verify the working directory exists and is correct.
+2. Run `pi --list-models` to confirm the model ID is valid.
+3. Retry without `--model` to use the default model.
+4. Run `pi --help` to check for flag changes.
 
 ## Examples
 
 ```bash
-cd /path/to/project && pi --offline --no-prompt-templates --no-themes -p "Review this proposal and give me the top risks and recommended changes"
+# Review-only delegation (restricted tools)
+cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --tools read,grep,glob,ls -p "Review this proposal and give me the top risks and recommended changes"
 
-cd /path/to/project && pi --offline --no-prompt-templates --no-themes --model cc/claude-sonnet-4-6 -p "Think through this decision and recommend the best option"
+# Specific model for reasoning
+cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --model {sonnet-model} -p "Think through this decision and recommend the best option"
 
-cd /path/to/project && pi --offline --no-prompt-templates --no-themes --model cc/claude-opus-4-6 -p "Give me a second opinion on this plan"
+# Second opinion with strongest model
+cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --model {opus-model} -p "Give me a second opinion on this plan"
 
-cd /path/to/project && pi --offline --no-prompt-templates --no-themes -c -p "Continue the previous task and refine the recommendation"
+# Continue a previous delegated session
+cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes -c -p "Refine the recommendation from the previous run"
 ```
 
 ## Prompt guidance
