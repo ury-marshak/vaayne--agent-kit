@@ -8,7 +8,7 @@ You cannot do a great job without having necessary context, such as target audie
 
 Attempt to gather these from the current thread or codebase.
 
-1. If you don't find *exact* information and have to infer from existing design and functionality, you MUST STOP and {{ask_instruction}} whether you got it right.
+1. If you don't find _exact_ information and have to infer from existing design and functionality, you MUST STOP and {{ask_instruction}} whether you got it right.
 2. Otherwise, if you can't fully infer or your level of confidence is medium or lower, you MUST {{ask_instruction}} clarifying questions first to complete your context.
 
 Do NOT proceed until you have answers. Delight that's wrong for the context is worse than no delight at all.
@@ -16,7 +16,6 @@ Do NOT proceed until you have answers. Delight that's wrong for the context is w
 ### Use frontend-design skill
 
 Use the frontend-design skill for design principles and anti-patterns. Do NOT proceed until it has executed and you know all DO's and DON'Ts.
-
 
 ## Assess Delight Opportunities
 
@@ -52,24 +51,28 @@ If any of these are unclear from the codebase, {{ask_instruction}}
 Follow these guidelines:
 
 ### Delight Amplifies, Never Blocks
+
 - Delight moments should be quick (< 1 second)
 - Never delay core functionality for delight
 - Make delight skippable or subtle
 - Respect user's time and task focus
 
 ### Surprise and Discovery
+
 - Hide delightful details for users to discover
 - Reward exploration and curiosity
 - Don't announce every delight moment
 - Let users share discoveries with others
 
 ### Appropriate to Context
+
 - Match delight to emotional moment (celebrate success, empathize with errors)
 - Respect the user's state (don't be playful during critical errors)
 - Match brand personality and audience expectations
 - Cultural sensitivity (what's delightful varies by culture)
 
 ### Compound Over Time
+
 - Delight should remain fresh with repeated use
 - Vary responses (not same animation every time)
 - Reveal deeper layers with continued use
@@ -82,6 +85,7 @@ Add personality and joy through these methods:
 ### Micro-interactions & Animation
 
 **Button delight**:
+
 ```css
 /* Satisfying button press */
 .button {
@@ -89,7 +93,7 @@ Add personality and joy through these methods:
 }
 .button:active {
   transform: translateY(2px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Ripple effect on click */
@@ -101,18 +105,21 @@ Add personality and joy through these methods:
 ```
 
 **Loading delight**:
+
 - Playful loading animations (not just spinners)
 - Personality in loading messages ("Herding pixels..." "Teaching robots to dance...")
 - Progress indication with encouraging messages
 - Skeleton screens with subtle animations
 
 **Success animations**:
+
 - Checkmark draw animation
 - Confetti burst for major achievements
 - Gentle scale + fade for confirmation
 - Satisfying sound effects (subtle)
 
 **Hover surprises**:
+
 - Icons that animate on hover
 - Color shifts or glow effects
 - Tooltip reveals with personality
@@ -121,6 +128,7 @@ Add personality and joy through these methods:
 ### Personality in Copy
 
 **Playful error messages**:
+
 ```
 "Error 404"
 "This page is playing hide and seek. (And winning)"
@@ -130,6 +138,7 @@ Add personality and joy through these methods:
 ```
 
 **Encouraging empty states**:
+
 ```
 "No projects"
 "Your canvas awaits. Create something amazing."
@@ -139,6 +148,7 @@ Add personality and joy through these methods:
 ```
 
 **Playful labels & tooltips**:
+
 ```
 "Delete"
 "Send to void" (for playful brand)
@@ -152,18 +162,21 @@ Add personality and joy through these methods:
 ### Illustrations & Visual Personality
 
 **Custom illustrations**:
+
 - Empty state illustrations (not stock icons)
 - Error state illustrations (friendly monsters, quirky characters)
 - Loading state illustrations (animated characters)
 - Success state illustrations (celebrations)
 
 **Icon personality**:
+
 - Custom icon set matching brand personality
 - Animated icons (subtle motion on hover/click)
 - Illustrative icons (more detailed than generic)
 - Consistent style across all icons
 
 **Background effects**:
+
 - Subtle particle effects
 - Gradient mesh backgrounds
 - Geometric patterns
@@ -173,24 +186,28 @@ Add personality and joy through these methods:
 ### Satisfying Interactions
 
 **Drag and drop delight**:
+
 - Lift effect on drag (shadow, scale)
 - Snap animation when dropped
 - Satisfying placement sound
 - Undo toast ("Dropped in wrong place? [Undo]")
 
 **Toggle switches**:
+
 - Smooth slide with spring physics
 - Color transition
 - Haptic feedback on mobile
 - Optional sound effect
 
 **Progress & achievements**:
+
 - Streak counters with celebratory milestones
 - Progress bars that "celebrate" at 100%
 - Badge unlocks with animation
 - Playful stats ("You're on fire! 5 days in a row")
 
 **Form interactions**:
+
 - Input fields that animate on focus
 - Checkboxes that bounce when checked
 - Success state that celebrates valid input
@@ -199,6 +216,7 @@ Add personality and joy through these methods:
 ### Sound Design
 
 **Subtle audio cues** (when appropriate):
+
 - Notification sounds (distinctive but not annoying)
 - Success sounds (satisfying "ding")
 - Error sounds (empathetic, not harsh)
@@ -206,6 +224,7 @@ Add personality and joy through these methods:
 - Ambient background audio (very subtle)
 
 **IMPORTANT**:
+
 - Respect system sound settings
 - Provide mute option
 - Keep volumes quiet (subtle cues, not alarms)
@@ -214,6 +233,7 @@ Add personality and joy through these methods:
 ### Easter Eggs & Hidden Delights
 
 **Discovery rewards**:
+
 - Konami code unlocks special theme
 - Hidden keyboard shortcuts (Cmd+K for special features)
 - Hover reveals on logos or illustrations
@@ -221,12 +241,14 @@ Add personality and joy through these methods:
 - Console messages for developers ("Like what you see? We're hiring!")
 
 **Seasonal touches**:
+
 - Holiday themes (subtle, tasteful)
 - Seasonal color shifts
 - Weather-based variations
 - Time-based changes (dark at night, light during day)
 
 **Contextual personality**:
+
 - Different messages based on time of day
 - Responses to specific user actions
 - Randomized variations (not same every time)
@@ -235,6 +257,7 @@ Add personality and joy through these methods:
 ### Loading & Waiting States
 
 **Make waiting engaging**:
+
 - Interesting loading messages that rotate
 - Progress bars with personality
 - Mini-games during long loads
@@ -252,6 +275,7 @@ Loading messages rotation:
 ### Celebration Moments
 
 **Success celebrations**:
+
 - Confetti for major milestones
 - Animated checkmarks for completions
 - Progress bar celebrations at 100%
@@ -259,6 +283,7 @@ Loading messages rotation:
 - Personalized messages ("You published your 10th article!")
 
 **Milestone recognition**:
+
 - First-time actions get special treatment
 - Streak tracking and celebration
 - Progress toward goals
@@ -267,22 +292,26 @@ Loading messages rotation:
 ## Implementation Patterns
 
 **Animation libraries**:
+
 - Framer Motion (React)
 - GSAP (universal)
 - Lottie (After Effects animations)
 - Canvas confetti (party effects)
 
 **Sound libraries**:
+
 - Howler.js (audio management)
 - Use-sound (React hook)
 
 **Physics libraries**:
+
 - React Spring (spring physics)
 - Popmotion (animation primitives)
 
 **IMPORTANT**: File size matters. Compress images, optimize animations, lazy load delight features.
 
 **NEVER**:
+
 - Delay core functionality for delight
 - Force users through delightful moments (make skippable)
 - Use delight to hide poor UX
