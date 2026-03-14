@@ -5,128 +5,86 @@ description: Plan-first development workflow with review gates. Use when impleme
 
 # Specs-Dev Workflow
 
-A disciplined, review-gated development workflow ensuring quality through structured planning and iterative implementation.
+A disciplined, review-gated development workflow: plan first, implement in phases, review between phases.
 
-## When to Use
+## Workflow
 
-- Implementing new features
-- Complex refactoring
-- Any task requiring planning before coding
-- When user requests "plan first" or "spec-driven" approach
-- Multi-file changes that benefit from review gates
-
-## Workflow Overview
-
-| Phase             | Purpose                       | Exit Criteria                |
-| ----------------- | ----------------------------- | ---------------------------- |
-| 1. Discovery      | Understand requirements       | User approves summary        |
-| 2. Planning       | Create reviewed plan          | Plan reviewed and approved   |
-| 3. Implementation | Iterative coding with reviews | All tasks complete, reviewed |
-| 4. Completion     | Final validation              | Tests pass, docs updated     |
+| Phase             | Purpose                     | Gate                       |
+| ----------------- | --------------------------- | -------------------------- |
+| 1. Discovery      | Understand requirements     | User approves summary      |
+| 2. Planning       | Create reviewed plan        | User approves plan         |
+| 3. Implementation | Phase-by-phase coding       | Each phase reviewed        |
 
 ## Phase 1: Discovery
 
-**Goal:** Reach shared understanding before planning.
+**Goal:** Shared understanding before planning.
 
-1. Interpret the request — state initial understanding
+1. State your understanding of the request
 2. Ask clarifying questions (goals, constraints, success criteria, out-of-scope)
-3. Iterate — reflect answers, tighten understanding
-4. Summarize — present final requirements
+3. Iterate until clear
+4. Present final requirements summary
 
-**Gate A:** "Do I understand correctly? Should I proceed to create the plan?" — Wait for approval.
+**Gate:** "Do I understand correctly? Should I proceed to planning?" — Wait for approval.
 
 ## Phase 2: Planning
 
 **Goal:** Create a comprehensive, reviewed implementation plan.
 
 1. Draft plan using `references/templates/plan.md`
-2. Review loop with reviewer (max 3 rounds) — see `references/agents/reviewer.md`
+2. Review with reviewer subagent (see `references/agents/reviewer.md`) — max 3 rounds
 3. Integrate feedback, iterate until approved
-4. **Gate B:** Present to user, wait for approval
-5. Create session: `.agents/sessions/{YYYY-MM-DD}-{feature-name}/`
-6. Save `plan.md` and `tasks.md` (use `references/templates/`)
+4. If still not approved after 3 rounds — summarize unresolved concerns and ask user whether to revise scope, continue anyway, or stop
+5. Resolve all Open Questions — convert remaining unknowns into explicit assumptions before proceeding
+6. Present plan to user — wait for approval
+7. Create session folder: `.agents/sessions/{YYYY-MM-DD}-{feature-name}/`
+8. Save `plan.md`, `tasks.md`, and `handoff.md` (initialized from `references/templates/handoff.md`) to session folder
 
-Quality gates: see `references/gates.md`
+**Plan quality check:**
+- Every requirement from Phase 1 addressed
+- Tasks are actionable and logically ordered
+- Testing strategy specified
+- Risks captured
+- No unresolved Open Questions (converted to assumptions or removed)
 
 ## Phase 3: Implementation
 
-**Goal:** Implement tasks iteratively with approval-gated review loops.
+**Goal:** Implement the plan phase-by-phase with reviews between phases.
 
-> ⚠️ **MANDATORY: You MUST follow `references/loop.md`** — Read and execute the implementation loop exactly as specified. Do not skip or deviate from the defined state machine.
+> Read `references/loop.md` before starting. It defines the phase loop.
 
-**Summary:** For each task:
-
-```
-IMPLEMENTING → VALIDATING → REVIEWING → loop until approved → COMMITTING → DOCUMENTING → NEXT TASK
-```
-
-**Required Steps:**
-
-1. **Read `references/loop.md`** before starting any implementation
-2. Follow the state machine transitions exactly
-3. Complete each state's requirements before transitioning
-4. Max 3 iterations per task before escalating to user
-5. Subagents: `references/agents/worker.md`, `references/agents/reviewer.md`
-
-Quality gates: see `references/gates.md`
-
-## Phase 4: Completion
-
-**Goal:** Final validation and wrap-up.
-
-1. Run full test suite
-2. Update `plan.md` with results, final status, known issues
-3. Verify all tasks complete in `tasks.md`
-4. Summarize completed work, risks, outcomes
-5. Confirm with user — session ready for merge/release
-
-Quality gates: see `references/gates.md`
-
-## Subagent Delegation
-
-**Reviewer** — Plan reviews, code reviews:
+**Summary of the loop:**
 
 ```
-Context: references/agents/reviewer.md
-Task: Review [plan/code] for completeness, security, performance, patterns
+For each phase in the plan:
+  1. Spawn worker subagent → implements all tasks, commits each one
+  2. Worker writes phase summary to handoff.md
+  3. Spawn reviewer subagent → reads handoff.md, reviews the phase
+  4. If changes needed → fix in main agent context
+  5. Continue to next phase
 ```
 
-**Worker** — Focused implementation:
+After the last phase: run full test suite, update session docs, confirm with user.
 
-```
-Context: references/agents/worker.md
-Task: Implement [objective] in [files] with [acceptance criteria]
-```
+**Subagents:**
+- Worker: `references/agents/worker.md`
+- Reviewer: `references/agents/reviewer.md`
+- Handoff protocol: `references/handoff.md`
 
 ## Session Structure
 
 ```
 .agents/sessions/{YYYY-MM-DD}-{feature-name}/
-├── plan.md      # Strategic plan
-└── tasks.md     # Tactical tasks
+├── plan.md       # Strategic plan
+├── tasks.md      # Task checklist
+└── handoff.md    # Phase handoff log (appended each phase)
 ```
 
 ## References
 
-```
-references/
-├── loop.md          # Phase 3 state machine, steps, fix routing
-├── gates.md         # Quality gates for all phases
-├── help.md          # Common issues, best practices
-├── agents/
-│   ├── reviewer.md  # Reviewer subagent context
-│   └── worker.md    # Worker subagent context
-└── templates/
-    ├── plan.md      # Plan document template
-    └── tasks.md     # Tasks document template
-```
-
-| File                 | When to Read                      |
-| -------------------- | --------------------------------- |
-| `loop.md`            | Phase 3 (MANDATORY — must follow) |
-| `agents/reviewer.md` | Plan/code reviews                 |
-| `agents/worker.md`   | Task implementation               |
-| `templates/plan.md`  | Phase 2                           |
-| `templates/tasks.md` | Phase 2                           |
-| `gates.md`           | Each phase exit                   |
-| `help.md`            | When stuck                        |
+| File                          | When to Read              |
+| ----------------------------- | ------------------------- |
+| `references/loop.md`          | Start of Phase 3          |
+| `references/handoff.md`       | Start of Phase 3          |
+| `references/agents/reviewer.md` | Plan/phase reviews      |
+| `references/agents/worker.md`   | Phase implementation    |
+| `references/templates/`         | Phase 2 (plan creation) |

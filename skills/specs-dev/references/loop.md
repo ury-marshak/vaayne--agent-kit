@@ -1,109 +1,48 @@
-# Implementation Loop
+# Phase Loop
 
-Task loop state machine for Phase 3.
+The implementation loop for Phase 3. One subagent per phase, review between phases.
 
-## State Machine
+## Flow
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│  IMPLEMENTING ◄───────────────────┐                      │
-│  (subagent)                       │                      │
-│       │                           │                      │
-│       ▼                           │                      │
-│  VALIDATING ──── fail ────────────┤                      │
-│  (tests/lint)                     │                      │
-│       │ pass                      │                      │
-│       ▼                           │                      │
-│  REVIEWING ───── not approved ────┤ (iteration < 3)      │
-│  (subagent)                       │                      │
-│       │                           │                      │
-│       │ approved       iteration >= 3                    │
-│       │                           │                      │
-│       │                    ┌──────┴──────┐               │
-│       │                    │  ESCALATE   │               │
-│       │                    │ (ask user)  │               │
-│       │                    └──────┬──────┘               │
-│       │◄──────────────────────────┘                      │
-│       ▼                                                  │
-│  COMMITTING                                              │
-│       │                                                  │
-│       ▼                                                  │
-│  DOCUMENTING ────► NEXT TASK                             │
-└──────────────────────────────────────────────────────────┘
+For each phase in plan.md:
+
+  1. IMPLEMENT (worker subagent)
+     - Read plan.md, tasks.md, and handoff.md for prior context
+     - Implement all tasks in the phase
+     - Commit after each task (emoji + conventional format)
+     - Append phase summary to handoff.md
+     - Return to main agent
+
+  2. REVIEW (reviewer subagent)
+     - Read handoff.md (focus on latest phase section)
+     - Review all commits in the phase
+     - Return verdict: APPROVED or CHANGES NEEDED with feedback
+
+  3. FIX (main agent, only if changes needed)
+     - Apply fixes directly
+     - Commit fixes
+     - Append fix notes to handoff.md
+     - If fixes are substantial, re-run reviewer on this phase
+
+  4. NEXT PHASE
+     - Update tasks.md (check off completed tasks)
+     - Continue to next phase
 ```
 
-## Loop Steps
+## After Last Phase
 
-For each task in `tasks.md`:
+1. Run full test suite
+2. Update plan.md with final status
+3. Verify all tasks checked off in tasks.md
+4. Summarize completed work to user
+5. Confirm session is ready for merge/release
 
-### 1. Start
+## Escalation
 
-- Set task state: `IMPLEMENTING`
-- Read context from `plan.md` and `tasks.md`
-- Initialize iteration counter: `0`
-
-### 2. Implement (Subagent)
-
-Delegate to worker subagent:
-
-- Context: `references/agents/worker.md`
-- Input: task objective, files, acceptance criteria
-- Input (if iteration > 0): previous feedback to address
-
-### 3. Validate
-
-- Set task state: `VALIDATING`
-- Run tests, check lint/type errors
-- **If fail:** Increment iteration, loop to step 2 with error output
-- **If pass:** Continue to step 4
-
-### 4. Review (Subagent)
-
-- Set task state: `REVIEWING`
-- Delegate to reviewer subagent
-- Context: `references/agents/reviewer.md`
-- Request structured verdict (approved/blockers/suggestions)
-
-### 5. Evaluate Verdict
-
-- **`approved: true`:** Continue to step 6
-- **`approved: false` and iteration < 3:** Increment iteration, loop to step 2
-- **`approved: false` and iteration >= 3:** Escalate to user
-
-### 6. Commit
-
-- Set task state: `APPROVED`
-- Commit with emoji + conventional format
-
-### 7. Document
-
-Update `tasks.md`:
-
-```markdown
-- [x] Task name
-  - **Files:** `file1.ts`, `file2.ts`
-  - **State:** APPROVED
-  - **Iterations:** 2
-  - **Approach:** Brief description
-  - **Gotchas:** Any surprises
-  - **Commit:** {hash}
-```
-
-Update `plan.md` only if implementation deviated or new decisions made.
-
-### 8. Next Task
-
-- Mark task complete
-- Move to next task, repeat from step 1
-
-## Fix Routing
-
-| Condition                            | Action                                 |
-| ------------------------------------ | -------------------------------------- |
-| Validation failure                   | Implementer subagent with error output |
-| Review blockers (critical/important) | Implementer subagent with feedback     |
-| Review suggestions only              | Orchestrator quick-fix or defer        |
-| Iteration >= 3                       | Pause, ask user for guidance           |
+If a phase review requires major rework (not just fixes):
+- Pause and ask the user for guidance
+- Do not start the next phase until resolved
 
 ## Commit Format
 
