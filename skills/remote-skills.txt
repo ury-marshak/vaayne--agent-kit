@@ -22,3 +22,5 @@ googleworkspace/cli --skill gws-gmail-triage
 googleworkspace/cli --skill gws-gmail-watch
 
 Bin-Huang/camoufox-cli
+jackwener/twitter-cli
+jackwener/xiaohongshu-cli
