@@ -33,7 +33,7 @@ Preset agent profiles live in `agents/` relative to this skill. Read the agent f
 3. Set `--model` per the table above.
 
 ```bash
-cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --append-system-prompt "$(cat {skill_dir}/agents/oracle.md)" --model {model} -p "Your task"
+cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --append-system-prompt "$(cat {skill_dir}/agents/oracle.md)" --model {model} -p "Your task" 2>&1
 ```
 
 Ad-hoc delegation (no preset) still works — just omit `--append-system-prompt`.
@@ -53,7 +53,7 @@ Ad-hoc delegation (no preset) still works — just omit `--append-system-prompt`
 Pattern (ad-hoc):
 
 ```bash
-cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes [--model {model}] [-c] -p "Your task"
+cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes [--model {model}] [-c] -p "Your task" 2>&1
 ```
 
 ## Model selection
@@ -88,7 +88,7 @@ Pick a model by matching the task to the right family and tier.
 
 ## Execution workflow
 
-1. Run Pi via `bash` and capture stdout.
+1. Run Pi via `bash` and capture stdout+stderr (always append `2>&1`).
 2. Read the output — treat it as input for your judgment, not automatic truth.
 3. Summarize findings back into the main task context.
 4. Decide whether to act on, discard, or refine the delegated result.
@@ -106,19 +106,19 @@ If Pi fails or returns unexpected results:
 
 ```bash
 # Oracle: architecture review (preset agent)
-cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --append-system-prompt "$(cat {skill_dir}/agents/oracle.md)" --model {opus-model} -p "Review this architecture and recommend improvements"
+cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --append-system-prompt "$(cat {skill_dir}/agents/oracle.md)" --model {opus-model} -p "Review this architecture and recommend improvements" 2>&1
 
 # Reviewer: code review (preset agent)
-cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --append-system-prompt "$(cat {skill_dir}/agents/reviewer.md)" --model {opus-model} -p "Review the changes in src/auth/ for security issues"
+cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --append-system-prompt "$(cat {skill_dir}/agents/reviewer.md)" --model {opus-model} -p "Review the changes in src/auth/ for security issues" 2>&1
 
 # Worker: general task (preset agent, full tools)
-cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --append-system-prompt "$(cat {skill_dir}/agents/worker.md)" --model {sonnet-model} -p "Refactor the logger module to use structured logging"
+cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --append-system-prompt "$(cat {skill_dir}/agents/worker.md)" --model {sonnet-model} -p "Refactor the logger module to use structured logging" 2>&1
 
 # Ad-hoc delegation (no preset)
-cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --model {sonnet-model} -p "Think through this decision and recommend the best option"
+cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes --model {sonnet-model} -p "Think through this decision and recommend the best option" 2>&1
 
 # Continue a previous delegated session
-cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes -c -p "Refine the recommendation from the previous run"
+cd "/path/to/project" && pi --offline --no-prompt-templates --no-themes -c -p "Refine the recommendation from the previous run" 2>&1
 ```
 
 ## Prompt guidance
