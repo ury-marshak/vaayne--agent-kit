@@ -17,11 +17,11 @@ MCP service at `https://tokenflux.ai/v1/images/mcp` (http) with 4 tools.
 
 ## Usage
 
-List tools: `mh list -u https://tokenflux.ai/v1/images/mcp --header "Authorization:Bearer ${TOKENFLUX_API_KEY}"`
+List tools: `mh list -u https://tokenflux.ai/v1/images/mcp --header "x-api-key:${TOKENFLUX_API_KEY}"`
 
-Get tool details: `mh inspect -u https://tokenflux.ai/v1/images/mcp --header "Authorization:Bearer ${TOKENFLUX_API_KEY}" <tool-name>`
+Get tool details: `mh inspect -u https://tokenflux.ai/v1/images/mcp --header "x-api-key:${TOKENFLUX_API_KEY}" <tool-name>`
 
-Invoke tool: `mh invoke -u https://tokenflux.ai/v1/images/mcp --header "Authorization:Bearer ${TOKENFLUX_API_KEY}" <tool-name> '{"param": "value"}'`
+Invoke tool: `mh invoke -u https://tokenflux.ai/v1/images/mcp --header "x-api-key:${TOKENFLUX_API_KEY}" <tool-name> '{"param": "value"}'`
 
 ## Workflow
 
