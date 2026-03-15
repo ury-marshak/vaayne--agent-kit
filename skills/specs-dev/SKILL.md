@@ -9,11 +9,11 @@ A disciplined, review-gated development workflow: plan first, implement in phase
 
 ## Workflow
 
-| Phase             | Purpose                     | Gate                       |
-| ----------------- | --------------------------- | -------------------------- |
-| 1. Discovery      | Understand requirements     | User approves summary      |
-| 2. Planning       | Create reviewed plan        | User approves plan         |
-| 3. Implementation | Phase-by-phase coding       | Each phase reviewed        |
+| Phase             | Purpose                 | Gate                  |
+| ----------------- | ----------------------- | --------------------- |
+| 1. Discovery      | Understand requirements | User approves summary |
+| 2. Planning       | Create reviewed plan    | User approves plan    |
+| 3. Implementation | Phase-by-phase coding   | Each phase reviewed   |
 
 ## Phase 1: Discovery
 
@@ -40,6 +40,7 @@ A disciplined, review-gated development workflow: plan first, implement in phase
 8. Save `plan.md`, `tasks.md`, and `handoff.md` (initialized from `references/templates/handoff.md`) to session folder
 
 **Plan quality check:**
+
 - Every requirement from Phase 1 addressed
 - Tasks are actionable and logically ordered
 - Testing strategy specified
@@ -66,6 +67,7 @@ For each phase in the plan:
 After the last phase: run full test suite, update session docs, confirm with user.
 
 **Subagents:**
+
 - Worker: `references/agents/worker.md`
 - Reviewer: `references/agents/reviewer.md`
 - Handoff protocol: `references/handoff.md`
@@ -81,10 +83,10 @@ After the last phase: run full test suite, update session docs, confirm with use
 
 ## References
 
-| File                          | When to Read              |
-| ----------------------------- | ------------------------- |
-| `references/loop.md`          | Start of Phase 3          |
-| `references/handoff.md`       | Start of Phase 3          |
+| File                            | When to Read            |
+| ------------------------------- | ----------------------- |
+| `references/loop.md`            | Start of Phase 3        |
+| `references/handoff.md`         | Start of Phase 3        |
 | `references/agents/reviewer.md` | Plan/phase reviews      |
 | `references/agents/worker.md`   | Phase implementation    |
 | `references/templates/`         | Phase 2 (plan creation) |

@@ -27,6 +27,7 @@ You are an implementation specialist. You receive a phase of work, implement all
 ## Quality Checklist
 
 Before returning:
+
 - [ ] All tasks in the phase implemented
 - [ ] Tests created/updated and passing
 - [ ] One commit per task

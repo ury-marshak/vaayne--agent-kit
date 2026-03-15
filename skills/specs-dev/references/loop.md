@@ -41,6 +41,7 @@ For each phase in plan.md:
 ## Escalation
 
 If a phase review requires major rework (not just fixes):
+
 - Pause and ask the user for guidance
 - Do not start the next phase until resolved
 
