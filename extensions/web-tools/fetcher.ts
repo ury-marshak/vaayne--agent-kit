@@ -1,3 +1,14 @@
+import { mkdtemp, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import {
+  DEFAULT_MAX_BYTES,
+  DEFAULT_MAX_LINES,
+  formatSize,
+  type TruncationResult,
+  truncateHead,
+  withFileMutationQueue,
+} from "@mariozechner/pi-coding-agent";
 import { JSDOM } from "jsdom";
 import TurndownService from "turndown";
 
@@ -11,10 +22,54 @@ export type FetchParams = {
 export type FetchResult = {
   content: string;
   isError: boolean;
+  truncation?: TruncationResult;
+  fullOutputPath?: string;
 };
 
 const DEFAULT_USER_AGENT =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+
+async function writeFullOutputToTempFile(content: string): Promise<string> {
+  const tempDir = await mkdtemp(join(tmpdir(), "pi-web-fetch-"));
+  const tempFile = join(tempDir, "output.txt");
+
+  await withFileMutationQueue(tempFile, async () => {
+    await writeFile(tempFile, content, "utf8");
+  });
+
+  return tempFile;
+}
+
+async function createSuccessResult(content: string): Promise<FetchResult> {
+  const truncation = truncateHead(content, {
+    maxLines: DEFAULT_MAX_LINES,
+    maxBytes: DEFAULT_MAX_BYTES,
+  });
+
+  if (!truncation.truncated) {
+    return {
+      content: truncation.content,
+      isError: false,
+    };
+  }
+
+  const fullOutputPath = await writeFullOutputToTempFile(content);
+  const omittedLines = truncation.totalLines - truncation.outputLines;
+  const omittedBytes = truncation.totalBytes - truncation.outputBytes;
+
+  let resultText = truncation.content;
+  resultText += `\n\n[Output truncated: showing ${truncation.outputLines} of ${truncation.totalLines} lines`;
+  resultText += ` (${formatSize(truncation.outputBytes)} of ${formatSize(truncation.totalBytes)}).`;
+  resultText += ` ${omittedLines} lines (${formatSize(omittedBytes)}) omitted.`;
+  resultText += ` Full output saved to: ${fullOutputPath}]`;
+
+  return {
+    content: resultText,
+    isError: false,
+    truncation,
+    fullOutputPath,
+  };
+}
 
 async function fetchUrl(params: FetchParams): Promise<Response> {
   const { url, headers } = params;
@@ -37,7 +92,7 @@ export async function fetchHtml(params: FetchParams): Promise<FetchResult> {
   try {
     const response = await fetchUrl(params);
     const html = await response.text();
-    return { content: html, isError: false };
+    return await createSuccessResult(html);
   } catch (error) {
     return {
       content: error instanceof Error ? error.message : String(error),
@@ -50,7 +105,7 @@ export async function fetchJson(params: FetchParams): Promise<FetchResult> {
   try {
     const response = await fetchUrl(params);
     const json = await response.json();
-    return { content: JSON.stringify(json, null, 2), isError: false };
+    return await createSuccessResult(JSON.stringify(json, null, 2));
   } catch (error) {
     return {
       content: error instanceof Error ? error.message : String(error),
@@ -79,7 +134,7 @@ export async function fetchText(params: FetchParams): Promise<FetchResult> {
     const text = document.body?.textContent || "";
     const normalizedText = text.replace(/\s+/g, " ").trim();
 
-    return { content: normalizedText, isError: false };
+    return await createSuccessResult(normalizedText);
   } catch (error) {
     return {
       content: error instanceof Error ? error.message : String(error),
@@ -122,7 +177,7 @@ export async function fetchMarkdown(params: FetchParams): Promise<FetchResult> {
 
     const markdown = turndownService.turndown(contentElement?.innerHTML || "");
 
-    return { content: markdown, isError: false };
+    return await createSuccessResult(markdown);
   } catch (error) {
     return {
       content: error instanceof Error ? error.message : String(error),
