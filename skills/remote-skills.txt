@@ -21,5 +21,4 @@ googleworkspace/cli --skill gws-gmail
 googleworkspace/cli --skill gws-gmail-triage
 googleworkspace/cli --skill gws-gmail-watch
 
-epiral/bb-browser
-
+browser-use/browser-use --skill browser-use
