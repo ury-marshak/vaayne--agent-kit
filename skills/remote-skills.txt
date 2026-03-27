@@ -23,3 +23,4 @@ googleworkspace/cli --skill gws-gmail-watch
 
 browser-use/browser-use --skill browser-use
 slidevjs/slidev
+openclaw/acpx
