@@ -9,69 +9,61 @@ metadata:
 
 # Coding Agents CLI Guide
 
-Use external coding agents to get second opinions, parallel reviews, or delegate tasks that benefit from a fresh context.
+## Agent Overview
 
-## When to Use Which Agent
+| Agent       | Command  | Default Model | Best For                            |
+| ----------- | -------- | ------------- | ----------------------------------- |
+| Codex       | `codex`  | gpt-5.4       | Code review, sandboxed exec         |
+| Claude Code | `claude` | Opus 4.6      | Multi-file tasks, agentic workflows |
+| Gemini      | `gemini` | Gemini 2.5    | One-shot prompts (not installed)    |
 
-| Agent                  | Best For                                    | Model              | Key Strength                                 |
-| ---------------------- | ------------------------------------------- | ------------------ | -------------------------------------------- |
-| **Codex** (`codex`)    | Code review, sandboxed exec                 | OpenAI o3/o4-mini  | Built-in `review` command, strict sandboxing |
-| **Claude Code** (`cc`) | Complex multi-file tasks, agentic workflows | Claude Opus/Sonnet | Rich tool ecosystem, worktrees, MCP support  |
-| **Gemini** (`gemini`)  | Quick one-shot prompts, codebase Q&A        | Gemini 2.5         | Free tier, fast responses                    |
+> `cc` is a local shell alias for `claude` with Bedrock + bypass permissions. Use `claude` when `cc` is unavailable.
+
+## Claude Code Models (`claude --model`)
+
+| Alias    | Use When                                    |
+| -------- | ------------------------------------------- |
+| `opus`   | Complex refactors, architecture, multi-file |
+| `sonnet` | Default — 80% of tasks, good speed/quality  |
+| `haiku`  | Simple lookups, boilerplate, bulk queries   |
 
 ## Quick Reference
 
-### Code Review
-
 ```bash
-# Codex — review uncommitted changes (no permissions needed)
-codex review --uncommitted
+# Code review
+codex review --uncommitted            # Independent review
+codex review --base main              # Review against branch
+claude -p "Review uncommitted changes"
 
-# Codex — review against a base branch
-codex review --base main
+# One-shot tasks
+codex exec "Fix the failing test"
+claude -p "Explain what src/index.ts does"
+claude --model haiku -p "Summarize this file"
 
-# Claude Code — review via print mode
-cc -p "Review the uncommitted changes in this repo for bugs and improvements"
+# Interactive
+codex --full-auto                     # Sandboxed, approval on-request
+claude
+claude --model sonnet
 
-# Gemini — review via prompt mode
-gemini -p "Review the recent changes and suggest improvements"
-```
+# Resume / continue sessions
+codex resume --last                   # Resume last Codex session
+claude -c                             # Continue last Claude session
+claude -r                             # Pick a Claude session to resume
 
-### One-Shot Tasks
-
-```bash
-# Codex — non-interactive exec
-codex exec "Fix the failing test in src/utils.test.ts"
-
-# Claude Code — non-interactive print
-cc -p "Explain what src/index.ts does"
-
-# Gemini — non-interactive prompt
-gemini -p "Summarize the architecture of this project"
-```
-
-### Interactive Sessions
-
-```bash
-# Codex — interactive with full-auto sandbox
-codex --full-auto
-
-# Claude Code — interactive (default)
-cc
-
-# Gemini — interactive (default)
-gemini
+# Piping
+git diff | claude -p "Review this diff"
+git diff | codex review -
 ```
 
 ## Tips
 
-- **Second opinion on code review**: Run `codex review --uncommitted` from within Claude Code via Bash to get an independent review without self-bias.
-- **Parallel agents**: Use tmux to run multiple agents simultaneously on different tasks.
-- **Piping**: All three support piping stdin — e.g., `git diff | cc -p "Review this diff"`.
-- **Model override**: Each agent supports model selection (`codex -m o3`, `cc --model opus`, `gemini -m gemini-2.5-flash`).
+- **Second opinion**: `codex review --uncommitted` — different model family eliminates self-bias
+- **Model override**: `codex -m gpt-5.4`, `claude --model opus/sonnet/haiku`. Codex models depend on account type.
+- **Cost control**: `claude -p --max-budget-usd 1.00` caps spending
+- **Turn limit**: `claude -p --max-turns 3` limits agentic loops in print mode
 
 ## Detailed References
 
-- [Codex CLI](./references/codex.md) — full command reference, review/exec modes, sandbox options
-- [Claude Code CLI](./references/claude-code.md) — cc alias, print mode, worktrees, permission modes
-- [Gemini CLI](./references/gemini.md) — installation, prompt mode, output formats
+- [Codex CLI](./references/codex.md)
+- [Claude Code CLI](./references/claude-code.md)
+- [Gemini CLI](./references/gemini.md)

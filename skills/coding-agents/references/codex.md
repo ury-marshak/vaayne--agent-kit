@@ -42,9 +42,9 @@ git diff HEAD~3 | codex review -
 codex exec "Fix the type error in src/api.ts"
 
 # With model override
-codex exec -m o3 "Refactor the auth module"
+codex exec -m gpt-5.4 "Refactor the auth module"
 
-# Full-auto mode (sandboxed, auto-approve)
+# Full-auto mode (sandboxed, approval on-request)
 codex exec --full-auto "Add unit tests for utils.ts"
 
 # Output last message to file
@@ -66,11 +66,11 @@ codex exec -C /path/to/project "Run the tests"
 # Default interactive
 codex
 
-# With full-auto sandbox (auto-approve + workspace-write)
+# With full-auto sandbox (on-request approval + workspace-write)
 codex --full-auto
 
 # With specific model
-codex -m o3
+codex -m gpt-5.4
 
 # With web search enabled
 codex --search
@@ -106,7 +106,7 @@ Config file: `~/.codex/config.toml`
 
 ```bash
 # Override config inline
-codex -c model="o3" -c 'sandbox_permissions=["disk-full-read-access"]'
+codex -c model="gpt-5.4" -c 'sandbox_permissions=["disk-full-read-access"]'
 
 # Use a config profile
 codex -p my-profile exec "Do something"

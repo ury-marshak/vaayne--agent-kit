@@ -1,10 +1,8 @@
 # Claude Code CLI Reference
 
-Anthropic's Claude Code agent. Alias: `cc` (configured with Bedrock + dangerously-skip-permissions).
+Canonical command: `claude`. Local alias `cc` wraps it with Bedrock + bypass permissions.
 
-## cc Alias
-
-The `cc` alias is configured as:
+## Local cc Alias
 
 ```bash
 cc() {
@@ -15,84 +13,61 @@ cc() {
 }
 ```
 
-This means `cc` runs with full permissions bypassed and uses AWS Bedrock as the provider.
+> All examples below use `claude` directly. Substitute `cc` when the alias is available.
 
 ## Non-Interactive Print Mode
 
 ```bash
-# Basic one-shot prompt
-cc -p "Explain what src/index.ts does"
+claude -p "Explain what src/index.ts does"
+git diff | claude -p "Review this diff for bugs"
 
-# Pipe input
-git diff | cc -p "Review this diff for bugs"
-cat error.log | cc -p "Diagnose this error"
+# Model selection
+claude --model opus -p "Refactor this function for readability"
+claude --model sonnet -p "Quick summary of this file"
+claude --model haiku -p "List all exports"
 
-# With specific model
-cc --model opus -p "Refactor this function for readability"
-cc --model sonnet -p "Quick summary of this file"
+# Guardrails
+claude -p --max-budget-usd 1.00 "Comprehensive code review of src/"
+claude -p --max-turns 5 "Fix lint errors and run tests"
 
-# JSON output for scripting
-cc -p --output-format json "List all exported functions in src/"
+# Output formats
+claude -p --output-format json "List all exported functions in src/"
+claude -p --output-format stream-json "Analyze this codebase"
 
-# Streaming JSON output
-cc -p --output-format stream-json "Analyze this codebase"
-
-# Budget cap
-cc -p --max-budget-usd 1.00 "Comprehensive code review of src/"
-
-# With system prompt
-cc -p --system-prompt "You are a security auditor" "Review src/auth.ts"
-
-# Append to default system prompt
-cc -p --append-system-prompt "Focus on performance" "Review src/api.ts"
-
-# Output to file
-cc -p "Summarize changes" > summary.txt
+# System prompt
+claude -p --system-prompt "You are a security auditor" "Review src/auth.ts"
+claude -p --append-system-prompt "Focus on performance" "Review src/api.ts"
 ```
 
 ## Interactive Mode
 
 ```bash
-# Default interactive
-cc
+claude                        # Default interactive
+claude -c                     # Continue last conversation
+claude -r                     # Resume picker
+claude -r <session-id>        # Resume specific session
+claude -n "feature-auth"      # Named session
 
-# Continue last conversation
-cc -c
+# Models (aliases: opus, sonnet, haiku)
+claude --model opus           # Most capable, complex tasks
+claude --model sonnet         # Balanced speed/quality
+claude --model haiku          # Fastest, simple tasks
 
-# Resume a specific session
-cc -r
+# Effort
+claude --effort high
+claude --effort max
 
-# Resume by session ID
-cc -r <session-id>
-
-# Named session
-cc -n "feature-auth"
-
-# With specific model
-cc --model opus
-
-# With effort level
-cc --effort high
-cc --effort low
-
-# With specific tools only
-cc --tools "Bash,Read,Grep"
-
-# With additional directories
-cc --add-dir ../shared-lib
+# Scoping
+claude --tools "Bash,Read,Grep"
+claude --add-dir ../shared-lib
 ```
 
 ## Worktree Mode
 
 ```bash
-# Create isolated git worktree for the session
-cc -w
-
-# Named worktree
-cc -w feature-branch
-
-# Worktree with tmux
-cc -w --tmux
+claude -w                     # Isolated git worktree
+claude -w feature-branch      # Named worktree
+claude -w --tmux              # Worktree with tmux
 ```
 
 ## Permission Modes
@@ -102,75 +77,32 @@ cc -w --tmux
 | `default`           | Ask for approval on risky actions        |
 | `plan`              | Read-only, no edits allowed              |
 | `acceptEdits`       | Auto-accept file edits, ask for commands |
+| `dontAsk`           | Never ask, fail silently on denied tools |
 | `bypassPermissions` | Skip all permission checks               |
 | `auto`              | Auto-approve within safety guardrails    |
 
 ```bash
-cc --permission-mode plan -p "Analyze this codebase"
-cc --permission-mode auto
-```
-
-## Agents
-
-```bash
-# List configured agents
-cc agents
-
-# Use a specific agent
-cc --agent reviewer
-```
-
-## MCP Configuration
-
-```bash
-# Manage MCP servers
-cc mcp
-
-# Load MCP config from file
-cc --mcp-config ./mcp-config.json
-
-# Strict MCP (only use specified config)
-cc --strict-mcp-config --mcp-config ./my-servers.json
+claude --permission-mode plan -p "Analyze this codebase"
+claude --permission-mode auto
 ```
 
 ## Session Management
 
 ```bash
-# Continue most recent conversation
-cc -c
-
-# Resume with picker
-cc -r
-
-# Resume with search
-cc -r "auth feature"
-
-# Fork a session (new ID, same context)
-cc -r <id> --fork-session
-
-# Resume from PR
-cc --from-pr 123
-cc --from-pr https://github.com/org/repo/pull/123
+claude -c                                          # Continue last
+claude -r                                          # Resume picker
+claude -r "auth feature"                           # Resume with search
+claude -r <id> --fork-session                      # Fork a session
+claude --from-pr 123                               # Resume from PR
+claude --from-pr https://github.com/org/repo/pull/123
 ```
 
 ## Useful Patterns
 
 ```bash
-# Quick code review via print mode
-git diff main | cc -p "Review this diff"
-
-# Get a second opinion from a different model
-cc --model sonnet -p "Review src/auth.ts for security issues"
-
-# Codebase exploration (read-only)
-cc --permission-mode plan -p "Explain the architecture of this project"
-
-# Parallel review in worktree
-cc -w -p "Run tests and fix any failures"
-
-# Budget-capped analysis
-cc -p --max-budget-usd 0.50 "Find all potential memory leaks"
-
-# Structured output
-cc -p --json-schema '{"type":"object","properties":{"issues":{"type":"array","items":{"type":"string"}}}}' "List issues in src/"
+git diff main | claude -p "Review this diff"
+claude --model sonnet -p "Review src/auth.ts for security issues"
+claude --permission-mode plan -p "Explain the architecture"
+claude -w -p "Run tests and fix any failures"
+claude -p --json-schema '{"type":"object","properties":{"issues":{"type":"array","items":{"type":"string"}}}}' "List issues"
 ```
