@@ -16,18 +16,30 @@ anthropics/skills --skill skill-creator
 vaayne/mcphub --skill find-skills
 vaayne/mcphub --skill mcp-skill-gen
 blader/humanizer --skill humanizer
+
+# Google workspace
 googleworkspace/cli --skill gws-gmail-send
 googleworkspace/cli --skill gws-gmail
 googleworkspace/cli --skill gws-gmail-triage
 googleworkspace/cli --skill gws-gmail-watch
 
+# web browser
 #browser-use/browser-use --skill browser-use
-slidevjs/slidev
-openclaw/acpx
 eze-is/web-access
 
+
+# write slides
+slidevjs/slidev
+zarazhangrui/frontend-slides
+
+
+# build ios/mac apps
 openai/plugins --skill ios-debugger-agent
 openai/plugins --skill swiftui-liquid-glass
 openai/plugins --skill swiftui-performance-audit
 openai/plugins --skill swiftui-ui-patterns
 openai/plugins --skill swiftui-view-refactor
+
+# miltiple agents
+openclaw/acpx
+
