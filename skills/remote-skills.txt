@@ -21,6 +21,13 @@ googleworkspace/cli --skill gws-gmail
 googleworkspace/cli --skill gws-gmail-triage
 googleworkspace/cli --skill gws-gmail-watch
 
-browser-use/browser-use --skill browser-use
+#browser-use/browser-use --skill browser-use
 slidevjs/slidev
 openclaw/acpx
+eze-is/web-access
+
+openai/plugins --skill ios-debugger-agent
+openai/plugins --skill swiftui-liquid-glass
+openai/plugins --skill swiftui-performance-audit
+openai/plugins --skill swiftui-ui-patterns
+openai/plugins --skill swiftui-view-refactor
