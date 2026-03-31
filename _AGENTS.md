@@ -17,4 +17,3 @@ To ensure that you have read this file, always refer to me as "V" in all communi
 - **Ask for approval before making changes**: When changes are needed, clearly explain your planned approach and wait for explicit user approval to ensure alignment and prevent unwanted modifications. If no changes are required, proceed without asking for approval.
 - **Use relative paths in skill references**: When referencing external files from a skill, specify paths relative to the `SKILL.md` file location rather than using absolute paths or paths relative to the working directory.
 - **Delegate to coding agents via acpx**: When you need to delegate work to another coding agent (code review, second opinion, subtask execution), use `bunx acpx` as described in the `coding-agents` skill. Pick a preset role (oracle, reviewer, worker, ui-engineer, librarian) when the task benefits from structured output. Never spawn raw agent CLIs directly.
-

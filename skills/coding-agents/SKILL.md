@@ -21,20 +21,20 @@ bunx acpx codex --help
 
 ## Agent Overview
 
-| Agent     | Command             | Best For                                 |
-| --------- | ------------------- | ---------------------------------------- |
-| Codex     | `bunx acpx codex`        | Code review, sandboxed exec (default)    |
-| Claude    | `bunx acpx claude`       | Multi-file tasks, agentic workflows      |
-| Gemini    | `bunx acpx gemini`       | Fast one-shot prompts, free tier         |
-| Pi        | `bunx acpx pi`           | Extensible, skill-driven tasks           |
-| Cursor    | `bunx acpx cursor`       | IDE-integrated agent                     |
-| Copilot   | `bunx acpx copilot`      | GitHub Copilot agent                     |
-| Droid     | `bunx acpx droid`        | Factory Droid agent                      |
-| Kimi      | `bunx acpx kimi`         | Kimi agent                               |
-| Kiro      | `bunx acpx kiro`         | Kiro agent                               |
-| Kilocode  | `bunx acpx kilocode`     | Kilocode agent                           |
-| OpenCode  | `bunx acpx opencode`     | OpenCode agent                           |
-| Qwen      | `bunx acpx qwen`         | Qwen agent                               |
+| Agent    | Command              | Best For                              |
+| -------- | -------------------- | ------------------------------------- |
+| Codex    | `bunx acpx codex`    | Code review, sandboxed exec (default) |
+| Claude   | `bunx acpx claude`   | Multi-file tasks, agentic workflows   |
+| Gemini   | `bunx acpx gemini`   | Fast one-shot prompts, free tier      |
+| Pi       | `bunx acpx pi`       | Extensible, skill-driven tasks        |
+| Cursor   | `bunx acpx cursor`   | IDE-integrated agent                  |
+| Copilot  | `bunx acpx copilot`  | GitHub Copilot agent                  |
+| Droid    | `bunx acpx droid`    | Factory Droid agent                   |
+| Kimi     | `bunx acpx kimi`     | Kimi agent                            |
+| Kiro     | `bunx acpx kiro`     | Kiro agent                            |
+| Kilocode | `bunx acpx kilocode` | Kilocode agent                        |
+| OpenCode | `bunx acpx opencode` | OpenCode agent                        |
+| Qwen     | `bunx acpx qwen`     | Qwen agent                            |
 
 > Default agent (when omitted) is `codex`.
 
@@ -95,11 +95,11 @@ bunx acpx --cwd ~/repos/other-project codex "fix lint errors"
 
 ## Permissions
 
-| Flag              | Behavior                                      |
-| ----------------- | --------------------------------------------- |
-| `--approve-all`   | Auto-approve all permission requests           |
-| `--approve-reads` | Auto-approve reads, prompt for writes (default)|
-| `--deny-all`      | Deny all permission requests                   |
+| Flag              | Behavior                                        |
+| ----------------- | ----------------------------------------------- |
+| `--approve-all`   | Auto-approve all permission requests            |
+| `--approve-reads` | Auto-approve reads, prompt for writes (default) |
+| `--deny-all`      | Deny all permission requests                    |
 
 ```bash
 bunx acpx --approve-all codex "fix all lint errors and commit"
@@ -108,11 +108,11 @@ bunx acpx --deny-all claude exec "explain the architecture"
 
 ## Output Formats
 
-| Format  | Use Case                         |
-| ------- | -------------------------------- |
-| `text`  | Human-readable stream (default)  |
-| `json`  | NDJSON event stream for scripts  |
-| `quiet` | Final assistant text only        |
+| Format  | Use Case                        |
+| ------- | ------------------------------- |
+| `text`  | Human-readable stream (default) |
+| `json`  | NDJSON event stream for scripts |
+| `quiet` | Final assistant text only       |
 
 ```bash
 # Machine-readable for pipelines
@@ -140,13 +140,13 @@ bunx acpx codex set thought_level high
 
 Role prompts live in `references/agents/` relative to this skill. Prepend them to your task prompt for structured delegation.
 
-| Role            | File                                       | Purpose                                |
-| --------------- | ------------------------------------------ | -------------------------------------- |
-| `oracle`        | [oracle.md](./references/agents/oracle.md) | Architecture advice, critique, planning |
-| `reviewer`      | [reviewer.md](./references/agents/reviewer.md) | Code review with structured feedback |
-| `worker`        | [worker.md](./references/agents/worker.md) | General-purpose task execution         |
-| `ui-engineer`   | [ui-engineer.md](./references/agents/ui-engineer.md) | Visual/UI design and implementation |
-| `librarian`     | [librarian.md](./references/agents/librarian.md) | Code search, docs lookup, examples |
+| Role          | File                                                 | Purpose                                 |
+| ------------- | ---------------------------------------------------- | --------------------------------------- |
+| `oracle`      | [oracle.md](./references/agents/oracle.md)           | Architecture advice, critique, planning |
+| `reviewer`    | [reviewer.md](./references/agents/reviewer.md)       | Code review with structured feedback    |
+| `worker`      | [worker.md](./references/agents/worker.md)           | General-purpose task execution          |
+| `ui-engineer` | [ui-engineer.md](./references/agents/ui-engineer.md) | Visual/UI design and implementation     |
+| `librarian`   | [librarian.md](./references/agents/librarian.md)     | Code search, docs lookup, examples      |
 
 ### Using a preset role
 
@@ -174,13 +174,13 @@ Refactor the logger module to use structured logging"
 
 ### Model selection guide
 
-| Task Type                          | Recommended Tier                 |
-| ---------------------------------- | -------------------------------- |
-| Complex reasoning, critique        | Best (opus, pro, codex)          |
-| Coding tasks                       | GPT codex variants, Claude opus  |
-| General purpose                    | Balanced (sonnet, codex default) |
-| Fast, cheap, high-volume           | Fast (haiku, flash)              |
-| Vision / image understanding       | Gemini flash                     |
+| Task Type                    | Recommended Tier                 |
+| ---------------------------- | -------------------------------- |
+| Complex reasoning, critique  | Best (opus, pro, codex)          |
+| Coding tasks                 | GPT codex variants, Claude opus  |
+| General purpose              | Balanced (sonnet, codex default) |
+| Fast, cheap, high-volume     | Fast (haiku, flash)              |
+| Vision / image understanding | Gemini flash                     |
 
 ## Tips
 
@@ -190,4 +190,3 @@ Refactor the logger module to use structured logging"
 - **Cost control**: Use `--max-turns` to limit agentic loops
 - **Raw adapter**: `bunx acpx --agent ./custom-acp-server "run checks"` for custom agents
 - **Preset roles**: Combine any role with any agent — e.g., oracle + claude for architecture, reviewer + codex for reviews
-

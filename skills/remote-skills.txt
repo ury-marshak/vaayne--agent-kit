@@ -25,7 +25,8 @@ googleworkspace/cli --skill gws-gmail-watch
 
 # web browser
 #browser-use/browser-use --skill browser-use
-eze-is/web-access
+#eze-is/web-access
+vaayne/tap --skill tap-web
 
 
 # write slides
