@@ -21,7 +21,6 @@ description = "Sync components to various local agent frameworks"
 depends = [
   "sync:skills",
   "sync:agents",
-  "sync:pi",
 ]
 
 [tasks."sync:skills"]
@@ -96,10 +95,3 @@ rsync -av ./_AGENTS.md ~/.config/amp/AGENTS.md
 echo "Synced _AGENTS.md to all frameworks"
 """
 
-[tasks."sync:pi"]
-description = "Sync Pi extensions to ~/.pi/agent"
-run = """
-mkdir -p ~/.pi/agent/extensions
-rsync -av ./extensions/*.ts ~/.pi/agent/extensions/ || true
-echo "Synced Pi extensions to ~/.pi/agent"
-"""
