@@ -41,3 +41,8 @@ openai/plugins --skill swiftui-performance-audit
 openai/plugins --skill swiftui-ui-patterns
 openai/plugins --skill swiftui-view-refactor
 
+# generate image
+JimLiu/baoyu-skills --skill baoyu-xhs-images
+JimLiu/baoyu-skills --skill baoyu-cover-image
+JimLiu/baoyu-skills --skill baoyu-infographic
+

@@ -9,11 +9,13 @@
 # ]
 # ///
 
-"""CLI for image generation and understanding using Google Vertex AI Gemini models."""
+"""CLI for image generation, editing, and understanding using Google Gemini models."""
 
 import logging
 import mimetypes
 import os
+import re
+from datetime import datetime
 from io import BytesIO
 from pathlib import Path
 
@@ -27,6 +29,15 @@ from rich.logging import RichHandler
 LOG_DIR = Path(".agents/logs")
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
+DEFAULT_OUTPUT_DIR = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "vertex-ai-images"
+
+
+def _default_output(prefix: str, prompt: str) -> str:
+    """Build a default output path like generate-20260402-134500-cat-astronaut.png."""
+    ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+    slug = re.sub(r"[^a-z0-9]+", "-", prompt.lower()).strip("-")[:48].rstrip("-")
+    return str(DEFAULT_OUTPUT_DIR / f"{prefix}-{ts}-{slug}.png")
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(message)s",
@@ -38,90 +49,225 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-DEFAULT_GENERATE_MODEL = "gemini-3.1-flash-image-preview"
-DEFAULT_READ_MODEL = "gemini-2.5-flash"
+MODEL_GENERATE = "gemini-3.1-flash-image-preview"
+MODEL_PRO = "gemini-3-pro-image-preview"
+MODEL_FAST = "gemini-2.5-flash-image"
+MODEL_READ = "gemini-2.5-flash"
 
-SAFETY_OFF = [
-    types.SafetySetting(category="HARM_CATEGORY_HATE_SPEECH", threshold="OFF"),
-    types.SafetySetting(category="HARM_CATEGORY_DANGEROUS_CONTENT", threshold="OFF"),
-    types.SafetySetting(category="HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold="OFF"),
-    types.SafetySetting(category="HARM_CATEGORY_HARASSMENT", threshold="OFF"),
+ASPECT_RATIOS = [
+    "1:1", "1:4", "1:8", "2:3", "3:2", "3:4",
+    "4:1", "4:3", "4:5", "5:4", "8:1",
+    "9:16", "16:9", "21:9",
 ]
+
+IMAGE_SIZES = ["512", "1K", "2K", "4K"]
+
+THINKING_LEVELS = ["minimal", "high"]
 
 
 def _make_client() -> genai.Client:
-    api_key = os.environ.get("GOOGLE_CLOUD_API_KEY")
+    api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_CLOUD_API_KEY")
     if not api_key:
         raise click.ClickException(
-            "GOOGLE_CLOUD_API_KEY not set. Export it first:\n"
+            "API key not set. Export one of:\n"
+            "  export GEMINI_API_KEY=your-key-here\n"
             "  export GOOGLE_CLOUD_API_KEY=your-key-here"
         )
-    return genai.Client(
-        vertexai=True,
-        api_key=api_key,
-    )
+    return genai.Client(api_key=api_key)
 
 
-@click.group()
-def cli() -> None:
-    """Generate or read images with Vertex AI Gemini models."""
+def _load_image_part(image_path: str) -> types.Part | Image.Image:
+    """Load an image from a local path or GCS URI."""
+    if image_path.startswith("gs://"):
+        mime = mimetypes.guess_type(image_path)[0] or "image/jpeg"
+        return types.Part.from_uri(file_uri=image_path, mime_type=mime)
+    img_path = Path(image_path)
+    if not img_path.exists():
+        raise click.ClickException(f"File not found: {image_path}")
+    return Image.open(img_path)
 
 
-@cli.command()
-@click.option("--prompt", "-p", required=True, help="Text prompt describing the image to generate.")
-@click.option("--output", "-o", default="output/generated.png", help="Output file path (png/jpg).")
-@click.option("--model", "-m", default=DEFAULT_GENERATE_MODEL, help=f"Model ID. Default: {DEFAULT_GENERATE_MODEL}")
-@click.option("--dry-run", is_flag=True, help="Preview the request without calling the API.")
-def generate(prompt: str, output: str, model: str, dry_run: bool) -> None:
-    """Generate an image from a text prompt."""
-    logger.info("Generate image — model=%s", model)
-    logger.info("Prompt: %s", prompt)
-    logger.info("Output: %s", output)
+def _build_image_config(
+    aspect_ratio: str | None,
+    size: str | None,
+) -> types.ImageConfig | None:
+    if not aspect_ratio and not size:
+        return None
+    kwargs: dict = {}
+    if aspect_ratio:
+        kwargs["aspect_ratio"] = aspect_ratio
+    if size:
+        kwargs["image_size"] = size
+    return types.ImageConfig(**kwargs)
 
-    if dry_run:
-        logger.info("[DRY RUN] Would call %s with the above prompt.", model)
-        return
 
-    client = _make_client()
+def _build_config(
+    *,
+    image_only: bool = False,
+    aspect_ratio: str | None = None,
+    size: str | None = None,
+    thinking_level: str | None = None,
+) -> types.GenerateContentConfig:
+    modalities = ["IMAGE"] if image_only else ["TEXT", "IMAGE"]
+    image_config = _build_image_config(aspect_ratio, size)
 
-    config = types.GenerateContentConfig(
-        response_modalities=["TEXT", "IMAGE"],
-        safety_settings=SAFETY_OFF,
-    )
+    kwargs: dict = {"response_modalities": modalities}
+    if image_config:
+        kwargs["image_config"] = image_config
+    if thinking_level:
+        kwargs["thinking_config"] = types.ThinkingConfig(
+            thinking_level=thinking_level.capitalize(),
+        )
+    return types.GenerateContentConfig(**kwargs)
 
+
+def _save_response(response, output: str) -> None:
+    """Extract text and images from a generate_content response."""
     out_path = Path(output)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     saved = False
-    for chunk in client.models.generate_content_stream(
-        model=model,
-        contents=prompt,
-        config=config,
-    ):
-        if chunk.candidates:
-            for part in chunk.candidates[0].content.parts:
-                if part.text:
-                    click.echo(part.text, nl=False)
-                elif part.inline_data:
-                    image = Image.open(BytesIO(part.inline_data.data))
-                    image.save(str(out_path))
-                    logger.info("Image saved to %s", out_path)
-                    saved = True
+    img_index = 0
 
-    click.echo()  # final newline after streaming text
+    for part in response.parts:
+        if getattr(part, "thought", False):
+            continue
+        if part.text is not None:
+            click.echo(part.text)
+        elif part.inline_data is not None:
+            if img_index == 0:
+                save_path = out_path
+            else:
+                save_path = out_path.with_stem(f"{out_path.stem}_{img_index}")
+            image = Image.open(BytesIO(part.inline_data.data))
+            image.save(str(save_path))
+            logger.info("Image saved to %s (%dx%d)", save_path, image.width, image.height)
+            saved = True
+            img_index += 1
 
     if not saved:
         logger.warning("No image data returned by the model.")
 
 
+@click.group()
+def cli() -> None:
+    """Generate, edit, or read images with Google Gemini models."""
+
+
+@cli.command()
+@click.option("--prompt", "-p", required=True, help="Text prompt describing the image to generate.")
+@click.option("--output", "-o", default=None, help="Output file path (default: $XDG_CACHE_HOME/vertex-ai-images/generated.png).")
+@click.option("--model", "-m", default=MODEL_GENERATE, help=f"Model ID (default: {MODEL_GENERATE}).")
+@click.option("--aspect-ratio", "-a", type=click.Choice(ASPECT_RATIOS), default=None, help="Output aspect ratio.")
+@click.option("--size", "-s", type=click.Choice(IMAGE_SIZES), default=None, help="Output resolution (512, 1K, 2K, 4K).")
+@click.option("--image-only", is_flag=True, help="Return only image, no text.")
+@click.option("--thinking-level", "-t", type=click.Choice(THINKING_LEVELS), default=None, help="Thinking level (minimal or high).")
+@click.option("--dry-run", is_flag=True, help="Preview the request without calling the API.")
+def generate(
+    prompt: str,
+    output: str,
+    model: str,
+    aspect_ratio: str | None,
+    size: str | None,
+    image_only: bool,
+    thinking_level: str | None,
+    dry_run: bool,
+) -> None:
+    """Generate an image from a text prompt."""
+    if output is None:
+        output = _default_output("generate", prompt)
+    logger.info("Generate — model=%s", model)
+    logger.info("Prompt: %s", prompt)
+    if aspect_ratio:
+        logger.info("Aspect ratio: %s", aspect_ratio)
+    if size:
+        logger.info("Size: %s", size)
+
+    if dry_run:
+        logger.info("[DRY RUN] Would call %s with the above settings.", model)
+        return
+
+    client = _make_client()
+    config = _build_config(
+        image_only=image_only,
+        aspect_ratio=aspect_ratio,
+        size=size,
+        thinking_level=thinking_level,
+    )
+
+    response = client.models.generate_content(
+        model=model,
+        contents=[prompt],
+        config=config,
+    )
+
+    _save_response(response, output)
+
+
+@cli.command()
+@click.option("--prompt", "-p", required=True, help="Edit instruction for the image(s).")
+@click.option("--image", "-i", "images", required=True, multiple=True, help="Input image path(s) or gs:// URI(s). Repeat for multiple images (up to 14).")
+@click.option("--output", "-o", default=None, help="Output file path (default: $XDG_CACHE_HOME/vertex-ai-images/edited.png).")
+@click.option("--model", "-m", default=MODEL_GENERATE, help=f"Model ID (default: {MODEL_GENERATE}).")
+@click.option("--aspect-ratio", "-a", type=click.Choice(ASPECT_RATIOS), default=None, help="Output aspect ratio.")
+@click.option("--size", "-s", type=click.Choice(IMAGE_SIZES), default=None, help="Output resolution (512, 1K, 2K, 4K).")
+@click.option("--image-only", is_flag=True, help="Return only image, no text.")
+@click.option("--thinking-level", "-t", type=click.Choice(THINKING_LEVELS), default=None, help="Thinking level (minimal or high).")
+@click.option("--dry-run", is_flag=True, help="Preview the request without calling the API.")
+def edit(
+    prompt: str,
+    images: tuple[str, ...],
+    output: str,
+    model: str,
+    aspect_ratio: str | None,
+    size: str | None,
+    image_only: bool,
+    thinking_level: str | None,
+    dry_run: bool,
+) -> None:
+    """Edit image(s) using a text prompt. Supports up to 14 reference images."""
+    if output is None:
+        output = _default_output("edit", prompt)
+    logger.info("Edit — model=%s", model)
+    logger.info("Prompt: %s", prompt)
+    logger.info("Input images: %s", ", ".join(images))
+
+    if len(images) > 14:
+        raise click.ClickException("Maximum 14 reference images allowed.")
+
+    if dry_run:
+        logger.info("[DRY RUN] Would call %s with the above settings.", model)
+        return
+
+    client = _make_client()
+    config = _build_config(
+        image_only=image_only,
+        aspect_ratio=aspect_ratio,
+        size=size,
+        thinking_level=thinking_level,
+    )
+
+    contents: list = [prompt]
+    for img_path in images:
+        contents.append(_load_image_part(img_path))
+
+    response = client.models.generate_content(
+        model=model,
+        contents=contents,
+        config=config,
+    )
+
+    _save_response(response, output)
+
+
 @cli.command()
 @click.option("--image", "-i", required=True, help="Local file path or gs:// URI of the image.")
 @click.option("--prompt", "-p", default="Describe this image in detail.", help="Question or instruction about the image.")
-@click.option("--model", "-m", default=DEFAULT_READ_MODEL, help=f"Model ID. Default: {DEFAULT_READ_MODEL}")
+@click.option("--model", "-m", default=MODEL_READ, help=f"Model ID (default: {MODEL_READ}).")
 @click.option("--dry-run", is_flag=True, help="Preview the request without calling the API.")
 def read(image: str, prompt: str, model: str, dry_run: bool) -> None:
     """Read and describe an image (local file or GCS URI)."""
-    logger.info("Read image — model=%s", model)
+    logger.info("Read — model=%s", model)
     logger.info("Image: %s", image)
     logger.info("Prompt: %s", prompt)
 
