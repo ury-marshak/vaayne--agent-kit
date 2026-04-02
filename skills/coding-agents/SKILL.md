@@ -19,23 +19,42 @@ bunx acpx --help
 bunx acpx pi --help
 ```
 
+## Important: Session Auto-Creation
+
+Commands **without `exec`** use a persistent session (conversation state preserved across calls) and require an active session to exist first. Commands **with `exec`** are one-shot and need no session.
+
+**Always prefix persistent commands** with `sessions ensure --name <role>` — use a **named session per purpose** so different tasks stay isolated while the same task can continue across calls:
+
+```bash
+# Ensure a named session for the role, then run in that session
+bunx acpx pi sessions ensure --name reviewer; bunx acpx --model openai-codex/gpt-5.4 -s reviewer pi "review the auth module"
+bunx acpx pi sessions ensure --name worker; bunx acpx --model sonnet -s worker pi "refactor the logger"
+
+# Same name = continues the previous conversation (idempotent)
+bunx acpx pi sessions ensure --name reviewer; bunx acpx --model openai-codex/gpt-5.4 -s reviewer pi "now check the tests too"
+```
+
+> **`ensure` vs `new`**: `ensure` is idempotent — reuses existing session by name. `new` always creates a fresh session, closing the previous one and losing conversation history. Use `new --name <role>` only when you want a clean slate.
+
+Prefer `exec` when no follow-up is needed — it requires no session.
+
 ## Agent Modes
 
 Use `--model` to select the right speed/quality tradeoff. All commands use `bunx acpx --model <model> pi`.
 
-| Mode  | Model              | Command                                           | Use When                              |
-| ----- | ------------------ | ------------------------------------------------- | ------------------------------------- |
-| Smart | Claude Opus 4.6    | `bunx acpx --model opus pi`                       | Unconstrained, state-of-the-art tasks |
-| Rush  | Claude Haiku 4.5   | `bunx acpx --model haiku pi`                      | Fast, cheap, well-defined tasks       |
-| Deep  | GPT-5.4 (thinking) | `bunx acpx --model openai-codex/gpt-5.4:high pi`  | Deep reasoning with extended thinking |
+| Mode  | Model              | Command                                          | Use When                              |
+| ----- | ------------------ | ------------------------------------------------ | ------------------------------------- |
+| Smart | Claude Opus 4.6    | `bunx acpx --model opus pi`                      | Unconstrained, state-of-the-art tasks |
+| Rush  | Claude Haiku 4.5   | `bunx acpx --model haiku pi`                     | Fast, cheap, well-defined tasks       |
+| Deep  | GPT-5.4 (thinking) | `bunx acpx --model openai-codex/gpt-5.4:high pi` | Deep reasoning with extended thinking |
 
 ```bash
 # One-shot tasks
 bunx acpx --model sonnet pi exec "summarize this repo"
 bunx acpx --model haiku pi exec "list all TODO comments"
 
-# Persistent session
-bunx acpx --model opus pi "refactor the auth module"
+# Persistent session (named session per purpose)
+bunx acpx pi sessions ensure --name refactor; bunx acpx --model opus -s refactor pi "refactor the auth module"
 
 # Code review
 bunx acpx --model openai-codex/gpt-5.4 pi exec "review uncommitted changes"
@@ -54,14 +73,14 @@ bunx acpx --format json --model sonnet pi exec "list all API endpoints"
 
 Role prompts live in `references/agents/` relative to this skill. Prepend them to your task prompt for structured delegation.
 
-| Role          | File                                                 | Purpose                                           | Recommended Model              |
-| ------------- | ---------------------------------------------------- | ------------------------------------------------- | ------------------------------ |
+| Role          | File                                                 | Purpose                                           | Recommended Model             |
+| ------------- | ---------------------------------------------------- | ------------------------------------------------- | ----------------------------- |
 | `reviewer`    | [reviewer.md](./references/agents/reviewer.md)       | Code review with structured feedback              | `openai-codex/gpt-5.4`        |
 | `oracle`      | [oracle.md](./references/agents/oracle.md)           | Architecture advice, critique, planning           | `openai-codex/gpt-5.4:medium` |
-| `worker`      | [worker.md](./references/agents/worker.md)           | General-purpose task execution                    | `sonnet`                       |
-| `ui-engineer` | [ui-engineer.md](./references/agents/ui-engineer.md) | Visual/UI design and implementation               | `opus`                         |
-| `librarian`   | [librarian.md](./references/agents/librarian.md)     | Large-scale retrieval & research on external code | `sonnet`                       |
-| `search`      | [search.md](./references/agents/search.md)           | Fast, accurate codebase retrieval                 | `kimi-k2p5-turbo`              |
+| `worker`      | [worker.md](./references/agents/worker.md)           | General-purpose task execution                    | `sonnet`                      |
+| `ui-engineer` | [ui-engineer.md](./references/agents/ui-engineer.md) | Visual/UI design and implementation               | `opus`                        |
+| `librarian`   | [librarian.md](./references/agents/librarian.md)     | Large-scale retrieval & research on external code | `sonnet`                      |
+| `search`      | [search.md](./references/agents/search.md)           | Fast, accurate codebase retrieval                 | `kimi-k2p5-turbo`             |
 
 ### Using a preset role
 
@@ -96,12 +115,12 @@ Find all usages of the AuthService class"
 
 These tasks use dedicated skills or lightweight agent calls rather than preset roles.
 
-| Utility    | Purpose                                  | Model           | How                                        |
-| ---------- | ---------------------------------------- | --------------- | ------------------------------------------ |
-| **Look At**  | Image, PDF, and media file analysis      | Gemini Flash    | Use `vertex-ai-image` skill `read` command |
-| **Painter**  | Image generation and editing             | Gemini Pro Image | Use `vertex-ai-image` skill `generate`/`edit` commands |
-| **Handoff**  | Fallback context analysis for continuation | —             | Use `handoff` skill                        |
-| **Titling**  | Fast title generation for threads        | Claude Haiku 4.5 | `bunx acpx --model haiku pi exec "..."` |
+| Utility     | Purpose                                    | Model            | How                                                    |
+| ----------- | ------------------------------------------ | ---------------- | ------------------------------------------------------ |
+| **Look At** | Image, PDF, and media file analysis        | Gemini Flash     | Use `vertex-ai-image` skill `read` command             |
+| **Painter** | Image generation and editing               | Gemini Pro Image | Use `vertex-ai-image` skill `generate`/`edit` commands |
+| **Handoff** | Fallback context analysis for continuation | —                | Use `handoff` skill                                    |
+| **Titling** | Fast title generation for threads          | Claude Haiku 4.5 | `bunx acpx --model haiku pi exec "..."`                |
 
 ### Look At — image & media analysis
 
@@ -207,14 +226,14 @@ bunx acpx pi set-mode auto             # Auto-approve mode
 
 While `pi` is the primary agent, other agents are available via acpx for second opinions or specific use cases:
 
-| Agent    | Command              | Best For                            |
-| -------- | -------------------- | ----------------------------------- |
-| Codex    | `bunx acpx codex`    | Sandboxed exec (acpx default)       |
-| Claude   | `bunx acpx claude`   | Multi-file tasks, agentic workflows |
-| Gemini   | `bunx acpx gemini`   | Fast one-shot prompts, free tier    |
-| Kimi     | `bunx acpx kimi`     | Kimi agent                          |
-| Cursor   | `bunx acpx cursor`   | IDE-integrated agent                |
-| Copilot  | `bunx acpx copilot`  | GitHub Copilot agent                |
+| Agent   | Command             | Best For                            |
+| ------- | ------------------- | ----------------------------------- |
+| Codex   | `bunx acpx codex`   | Sandboxed exec (acpx default)       |
+| Claude  | `bunx acpx claude`  | Multi-file tasks, agentic workflows |
+| Gemini  | `bunx acpx gemini`  | Fast one-shot prompts, free tier    |
+| Kimi    | `bunx acpx kimi`    | Kimi agent                          |
+| Cursor  | `bunx acpx cursor`  | IDE-integrated agent                |
+| Copilot | `bunx acpx copilot` | GitHub Copilot agent                |
 
 ## Tips
 
