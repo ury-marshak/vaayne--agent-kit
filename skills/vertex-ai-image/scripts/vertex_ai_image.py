@@ -29,7 +29,9 @@ from rich.logging import RichHandler
 LOG_DIR = Path(".agents/logs")
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
-DEFAULT_OUTPUT_DIR = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "vertex-ai-images"
+DEFAULT_OUTPUT_DIR = (
+    Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "vertex-ai-images"
+)
 
 
 def _default_output(prefix: str, prompt: str) -> str:
@@ -37,6 +39,7 @@ def _default_output(prefix: str, prompt: str) -> str:
     ts = datetime.now().strftime("%Y%m%d-%H%M%S")
     slug = re.sub(r"[^a-z0-9]+", "-", prompt.lower()).strip("-")[:48].rstrip("-")
     return str(DEFAULT_OUTPUT_DIR / f"{prefix}-{ts}-{slug}.png")
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -55,9 +58,20 @@ MODEL_FAST = "gemini-2.5-flash-image"
 MODEL_READ = "gemini-2.5-flash"
 
 ASPECT_RATIOS = [
-    "1:1", "1:4", "1:8", "2:3", "3:2", "3:4",
-    "4:1", "4:3", "4:5", "5:4", "8:1",
-    "9:16", "16:9", "21:9",
+    "1:1",
+    "1:4",
+    "1:8",
+    "2:3",
+    "3:2",
+    "3:4",
+    "4:1",
+    "4:3",
+    "4:5",
+    "5:4",
+    "8:1",
+    "9:16",
+    "16:9",
+    "21:9",
 ]
 
 IMAGE_SIZES = ["512", "1K", "2K", "4K"]
@@ -141,7 +155,9 @@ def _save_response(response, output: str) -> None:
                 save_path = out_path.with_stem(f"{out_path.stem}_{img_index}")
             image = Image.open(BytesIO(part.inline_data.data))
             image.save(str(save_path))
-            logger.info("Image saved to %s (%dx%d)", save_path, image.width, image.height)
+            logger.info(
+                "Image saved to %s (%dx%d)", save_path, image.width, image.height
+            )
             saved = True
             img_index += 1
 
@@ -155,14 +171,49 @@ def cli() -> None:
 
 
 @cli.command()
-@click.option("--prompt", "-p", required=True, help="Text prompt describing the image to generate.")
-@click.option("--output", "-o", default=None, help="Output file path (default: $XDG_CACHE_HOME/vertex-ai-images/generated.png).")
-@click.option("--model", "-m", default=MODEL_GENERATE, help=f"Model ID (default: {MODEL_GENERATE}).")
-@click.option("--aspect-ratio", "-a", type=click.Choice(ASPECT_RATIOS), default=None, help="Output aspect ratio.")
-@click.option("--size", "-s", type=click.Choice(IMAGE_SIZES), default=None, help="Output resolution (512, 1K, 2K, 4K).")
+@click.option(
+    "--prompt",
+    "-p",
+    required=True,
+    help="Text prompt describing the image to generate.",
+)
+@click.option(
+    "--output",
+    "-o",
+    default=None,
+    help="Output file path (default: $XDG_CACHE_HOME/vertex-ai-images/generated.png).",
+)
+@click.option(
+    "--model",
+    "-m",
+    default=MODEL_GENERATE,
+    help=f"Model ID (default: {MODEL_GENERATE}).",
+)
+@click.option(
+    "--aspect-ratio",
+    "-a",
+    type=click.Choice(ASPECT_RATIOS),
+    default=None,
+    help="Output aspect ratio.",
+)
+@click.option(
+    "--size",
+    "-s",
+    type=click.Choice(IMAGE_SIZES),
+    default=None,
+    help="Output resolution (512, 1K, 2K, 4K).",
+)
 @click.option("--image-only", is_flag=True, help="Return only image, no text.")
-@click.option("--thinking-level", "-t", type=click.Choice(THINKING_LEVELS), default=None, help="Thinking level (minimal or high).")
-@click.option("--dry-run", is_flag=True, help="Preview the request without calling the API.")
+@click.option(
+    "--thinking-level",
+    "-t",
+    type=click.Choice(THINKING_LEVELS),
+    default=None,
+    help="Thinking level (minimal or high).",
+)
+@click.option(
+    "--dry-run", is_flag=True, help="Preview the request without calling the API."
+)
 def generate(
     prompt: str,
     output: str,
@@ -205,15 +256,54 @@ def generate(
 
 
 @cli.command()
-@click.option("--prompt", "-p", required=True, help="Edit instruction for the image(s).")
-@click.option("--image", "-i", "images", required=True, multiple=True, help="Input image path(s) or gs:// URI(s). Repeat for multiple images (up to 14).")
-@click.option("--output", "-o", default=None, help="Output file path (default: $XDG_CACHE_HOME/vertex-ai-images/edited.png).")
-@click.option("--model", "-m", default=MODEL_GENERATE, help=f"Model ID (default: {MODEL_GENERATE}).")
-@click.option("--aspect-ratio", "-a", type=click.Choice(ASPECT_RATIOS), default=None, help="Output aspect ratio.")
-@click.option("--size", "-s", type=click.Choice(IMAGE_SIZES), default=None, help="Output resolution (512, 1K, 2K, 4K).")
+@click.option(
+    "--prompt", "-p", required=True, help="Edit instruction for the image(s)."
+)
+@click.option(
+    "--image",
+    "-i",
+    "images",
+    required=True,
+    multiple=True,
+    help="Input image path(s) or gs:// URI(s). Repeat for multiple images (up to 14).",
+)
+@click.option(
+    "--output",
+    "-o",
+    default=None,
+    help="Output file path (default: $XDG_CACHE_HOME/vertex-ai-images/edited.png).",
+)
+@click.option(
+    "--model",
+    "-m",
+    default=MODEL_GENERATE,
+    help=f"Model ID (default: {MODEL_GENERATE}).",
+)
+@click.option(
+    "--aspect-ratio",
+    "-a",
+    type=click.Choice(ASPECT_RATIOS),
+    default=None,
+    help="Output aspect ratio.",
+)
+@click.option(
+    "--size",
+    "-s",
+    type=click.Choice(IMAGE_SIZES),
+    default=None,
+    help="Output resolution (512, 1K, 2K, 4K).",
+)
 @click.option("--image-only", is_flag=True, help="Return only image, no text.")
-@click.option("--thinking-level", "-t", type=click.Choice(THINKING_LEVELS), default=None, help="Thinking level (minimal or high).")
-@click.option("--dry-run", is_flag=True, help="Preview the request without calling the API.")
+@click.option(
+    "--thinking-level",
+    "-t",
+    type=click.Choice(THINKING_LEVELS),
+    default=None,
+    help="Thinking level (minimal or high).",
+)
+@click.option(
+    "--dry-run", is_flag=True, help="Preview the request without calling the API."
+)
 def edit(
     prompt: str,
     images: tuple[str, ...],
@@ -261,10 +351,21 @@ def edit(
 
 
 @cli.command()
-@click.option("--image", "-i", required=True, help="Local file path or gs:// URI of the image.")
-@click.option("--prompt", "-p", default="Describe this image in detail.", help="Question or instruction about the image.")
-@click.option("--model", "-m", default=MODEL_READ, help=f"Model ID (default: {MODEL_READ}).")
-@click.option("--dry-run", is_flag=True, help="Preview the request without calling the API.")
+@click.option(
+    "--image", "-i", required=True, help="Local file path or gs:// URI of the image."
+)
+@click.option(
+    "--prompt",
+    "-p",
+    default="Describe this image in detail.",
+    help="Question or instruction about the image.",
+)
+@click.option(
+    "--model", "-m", default=MODEL_READ, help=f"Model ID (default: {MODEL_READ})."
+)
+@click.option(
+    "--dry-run", is_flag=True, help="Preview the request without calling the API."
+)
 def read(image: str, prompt: str, model: str, dry_run: bool) -> None:
     """Read and describe an image (local file or GCS URI)."""
     logger.info("Read — model=%s", model)

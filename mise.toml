@@ -11,8 +11,6 @@ echo "Setup complete"
 [tasks.format]
 description = "Format code using dprint"
 run = """
-# uvx ruff check --fix
-# Format other supported files using dprint
 dprint fmt
 """
 
