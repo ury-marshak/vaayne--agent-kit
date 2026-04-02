@@ -58,11 +58,7 @@ function findMarkdownFiles(dir: string): string[] {
 /**
  * Scan a rules directory and return discovered rule files.
  */
-function scanRulesDir(
-  cwd: string,
-  dirRelative: string,
-  source: RuleFile["source"],
-): RuleFile[] {
+function scanRulesDir(cwd: string, dirRelative: string, source: RuleFile["source"]): RuleFile[] {
   const dir = path.join(cwd, dirRelative);
   const mdFiles = findMarkdownFiles(dir);
 

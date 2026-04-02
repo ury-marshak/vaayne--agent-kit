@@ -169,10 +169,10 @@ module.exports = {
   userUrlFormat: "{{host}}/{{user}}",
   releaseCommitMessageFormat: "chore(release): {{currentTag}}",
   scripts: {
-    prebump: "echo \"Running prebump\"",
-    postbump: "echo \"Running postbump\"",
-    prechangelog: "echo \"Running prechangelog\"",
-    postchangelog: "echo \"Running postchangelog\"",
+    prebump: 'echo "Running prebump"',
+    postbump: 'echo "Running postbump"',
+    prechangelog: 'echo "Running prechangelog"',
+    postchangelog: 'echo "Running postchangelog"',
   },
 };
 ```
@@ -198,7 +198,10 @@ module.exports = {
   branches: [
     "main",
     { name: "beta", prerelease: true },
-    { name: "alpha", prerelease: true },
+    {
+      name: "alpha",
+      prerelease: true,
+    },
   ],
   plugins: [
     "@semantic-release/commit-analyzer",

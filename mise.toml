@@ -18,10 +18,7 @@ dprint fmt
 
 [tasks.sync]
 description = "Sync components to various local agent frameworks"
-depends = [
-  "sync:skills",
-  "sync:agents",
-]
+depends = ["sync:skills", "sync:agents"]
 
 [tasks."sync:skills"]
 description = "Sync all skills (local + remote) to ~/.agents/skills"

@@ -57,10 +57,10 @@ return "Done";
 const repos = await mcp.callTool("githubSearch", { query: "mcp", perPage: 10 });
 
 // Filter and process results
-const popular = repos.filter(r => r.stars > 100);
+const popular = repos.filter((r) => r.stars > 100);
 
 // Return processed data
-return popular.map(r => ({ name: r.name, stars: r.stars }));
+return popular.map((r) => ({ name: r.name, stars: r.stars }));
 ```
 
 ### Loop Through Items

@@ -6,7 +6,8 @@
 
 import { execSync, spawnSync } from "node:child_process";
 
-const INSTALL_SCRIPT_URL = "https://raw.githubusercontent.com/vaayne/mcphub/main/scripts/install.sh";
+const INSTALL_SCRIPT_URL =
+  "https://raw.githubusercontent.com/vaayne/mcphub/main/scripts/install.sh";
 
 // Check if mh is already installed
 function isMhInstalled() {

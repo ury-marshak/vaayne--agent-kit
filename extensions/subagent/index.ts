@@ -110,15 +110,19 @@ function formatToolCall(
     case "find": {
       const pattern = (args.pattern || "*") as string;
       const rawPath = (args.path || ".") as string;
-      return themeFg("muted", "find ") + themeFg("accent", pattern) + themeFg("dim", ` in ${shortenPath(rawPath)}`);
+      return (
+        themeFg("muted", "find ") +
+        themeFg("accent", pattern) +
+        themeFg("dim", ` in ${shortenPath(rawPath)}`)
+      );
     }
     case "grep": {
       const pattern = (args.pattern || "") as string;
       const rawPath = (args.path || ".") as string;
       return (
-        themeFg("muted", "grep ")
-        + themeFg("accent", `/${pattern}/`)
-        + themeFg("dim", ` in ${shortenPath(rawPath)}`)
+        themeFg("muted", "grep ") +
+        themeFg("accent", `/${pattern}/`) +
+        themeFg("dim", ` in ${shortenPath(rawPath)}`)
       );
     }
     default: {
@@ -172,7 +176,9 @@ function getFinalOutput(messages: Message[]): string {
   return "";
 }
 
-type DisplayItem = { type: "text"; text: string } | { type: "toolCall"; name: string; args: Record<string, any> };
+type DisplayItem =
+  | { type: "text"; text: string }
+  | { type: "toolCall"; name: string; args: Record<string, any> };
 
 function getDisplayItems(messages: Message[]): DisplayItem[] {
   const items: DisplayItem[] = [];
@@ -180,7 +186,9 @@ function getDisplayItems(messages: Message[]): DisplayItem[] {
     if (msg.role === "assistant") {
       for (const part of msg.content) {
         if (part.type === "text") items.push({ type: "text", text: part.text });
-        else if (part.type === "toolCall") items.push({ type: "toolCall", name: part.name, args: part.arguments });
+        else if (part.type === "toolCall") {
+          items.push({ type: "toolCall", name: part.name, args: part.arguments });
+        }
       }
     }
   }
@@ -207,7 +215,10 @@ async function mapWithConcurrencyLimit<TIn, TOut>(
   return results;
 }
 
-function writePromptToTempFile(agentName: string, prompt: string): { dir: string; filePath: string } {
+function writePromptToTempFile(
+  agentName: string,
+  prompt: string,
+): { dir: string; filePath: string } {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-subagent-"));
   const safeName = agentName.replace(/[^\w.-]+/g, "_");
   const filePath = path.join(tmpDir, `prompt-${safeName}.md`);
@@ -238,7 +249,15 @@ async function runSingleAgent(
       exitCode: 1,
       messages: [],
       stderr: `Unknown agent: ${agentName}`,
-      usage: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0, contextTokens: 0, turns: 0 },
+      usage: {
+        input: 0,
+        output: 0,
+        cacheRead: 0,
+        cacheWrite: 0,
+        cost: 0,
+        contextTokens: 0,
+        turns: 0,
+      },
       step,
     };
   }
@@ -257,7 +276,15 @@ async function runSingleAgent(
     exitCode: 0,
     messages: [],
     stderr: "",
-    usage: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0, contextTokens: 0, turns: 0 },
+    usage: {
+      input: 0,
+      output: 0,
+      cacheRead: 0,
+      cacheWrite: 0,
+      cost: 0,
+      contextTokens: 0,
+      turns: 0,
+    },
     model: agent.model,
     step,
   };
@@ -283,7 +310,11 @@ async function runSingleAgent(
     let wasAborted = false;
 
     const exitCode = await new Promise<number>((resolve) => {
-      const proc = spawn("pi", args, { cwd: cwd ?? defaultCwd, shell: false, stdio: ["ignore", "pipe", "pipe"] });
+      const proc = spawn("pi", args, {
+        cwd: cwd ?? defaultCwd,
+        shell: false,
+        stdio: ["ignore", "pipe", "pipe"],
+      });
       let buffer = "";
 
       const processLine = (line: string) => {
@@ -390,23 +421,35 @@ const ChainItem = Type.Object({
 });
 
 const AgentScopeSchema = StringEnum(["user", "project", "both"] as const, {
-  description: "Which agent directories to use. Default: \"user\". Use \"both\" to include project-local agents.",
+  description:
+    'Which agent directories to use. Default: "user". Use "both" to include project-local agents.',
   default: "user",
 });
 
 const SubagentParams = Type.Object({
-  agent: Type.Optional(Type.String({ description: "Name of the agent to invoke (for single mode)" })),
+  agent: Type.Optional(
+    Type.String({ description: "Name of the agent to invoke (for single mode)" }),
+  ),
   task: Type.Optional(Type.String({ description: "Task to delegate (for single mode)" })),
-  tasks: Type.Optional(Type.Array(TaskItem, { description: "Array of {agent, task} for parallel execution" })),
-  chain: Type.Optional(Type.Array(ChainItem, { description: "Array of {agent, task} for sequential execution" })),
+  tasks: Type.Optional(
+    Type.Array(TaskItem, { description: "Array of {agent, task} for parallel execution" }),
+  ),
+  chain: Type.Optional(
+    Type.Array(ChainItem, { description: "Array of {agent, task} for sequential execution" }),
+  ),
   agentScope: Type.Optional(AgentScopeSchema),
   confirmProjectAgents: Type.Optional(
-    Type.Boolean({ description: "Prompt before running project-local agents. Default: true.", default: true }),
+    Type.Boolean({
+      description: "Prompt before running project-local agents. Default: true.",
+      default: true,
+    }),
   ),
-  cwd: Type.Optional(Type.String({ description: "Working directory for the agent process (single mode)" })),
+  cwd: Type.Optional(
+    Type.String({ description: "Working directory for the agent process (single mode)" }),
+  ),
 });
 
-export default function(pi: ExtensionAPI) {
+export default function (pi: ExtensionAPI) {
   // Store discovered agents at session start for system prompt injection
   let discoveredAgents: AgentConfig[] = [];
 
@@ -427,13 +470,12 @@ export default function(pi: ExtensionAPI) {
       return;
     }
 
-    const agentsList = discoveredAgents
-      .map((a) => `- **${a.name}**: ${a.description}`)
-      .join("\n");
+    const agentsList = discoveredAgents.map((a) => `- **${a.name}**: ${a.description}`).join("\n");
 
     return {
-      systemPrompt: event.systemPrompt
-        + `
+      systemPrompt:
+        event.systemPrompt +
+        `
 
 ## Available Subagents
 
@@ -452,8 +494,8 @@ Use the subagent tool to delegate tasks to these specialized agents when appropr
     description: [
       "Delegate tasks to specialized subagents with isolated context.",
       "Modes: single (agent + task), parallel (tasks array), chain (sequential with {previous} placeholder).",
-      "Default agent scope is \"user\" (from ~/.pi/agent/agents).",
-      "To enable project-local agents in .pi/agents, set agentScope: \"both\" (or \"project\").",
+      'Default agent scope is "user" (from ~/.pi/agent/agents).',
+      'To enable project-local agents in .pi/agents, set agentScope: "both" (or "project").',
     ].join(" "),
     parameters: SubagentParams,
 
@@ -468,12 +510,14 @@ Use the subagent tool to delegate tasks to these specialized agents when appropr
       const hasSingle = Boolean(params.agent && params.task);
       const modeCount = Number(hasChain) + Number(hasTasks) + Number(hasSingle);
 
-      const makeDetails = (mode: "single" | "parallel" | "chain") => (results: SingleResult[]): SubagentDetails => ({
-        mode,
-        agentScope,
-        projectAgentsDir: discovery.projectAgentsDir,
-        results,
-      });
+      const makeDetails =
+        (mode: "single" | "parallel" | "chain") =>
+        (results: SingleResult[]): SubagentDetails => ({
+          mode,
+          agentScope,
+          projectAgentsDir: discovery.projectAgentsDir,
+          results,
+        });
 
       if (modeCount !== 1) {
         const available = agents.map((a) => `${a.name} (${a.source})`).join(", ") || "none";
@@ -488,10 +532,18 @@ Use the subagent tool to delegate tasks to these specialized agents when appropr
         };
       }
 
-      if ((agentScope === "project" || agentScope === "both") && confirmProjectAgents && ctx.hasUI) {
+      if (
+        (agentScope === "project" || agentScope === "both") &&
+        confirmProjectAgents &&
+        ctx.hasUI
+      ) {
         const requestedAgentNames = new Set<string>();
-        if (params.chain) { for (const step of params.chain) requestedAgentNames.add(step.agent); }
-        if (params.tasks) { for (const t of params.tasks) requestedAgentNames.add(t.agent); }
+        if (params.chain) {
+          for (const step of params.chain) requestedAgentNames.add(step.agent);
+        }
+        if (params.tasks) {
+          for (const t of params.tasks) requestedAgentNames.add(t.agent);
+        }
         if (params.agent) requestedAgentNames.add(params.agent);
 
         const projectAgentsRequested = Array.from(requestedAgentNames)
@@ -525,16 +577,16 @@ Use the subagent tool to delegate tasks to these specialized agents when appropr
           // Create update callback that includes all previous results
           const chainUpdate: OnUpdateCallback | undefined = onUpdate
             ? (partial) => {
-              // Combine completed results with current streaming result
-              const currentResult = partial.details?.results[0];
-              if (currentResult) {
-                const allResults = [...results, currentResult];
-                onUpdate({
-                  content: partial.content,
-                  details: makeDetails("chain")(allResults),
-                });
+                // Combine completed results with current streaming result
+                const currentResult = partial.details?.results[0];
+                if (currentResult) {
+                  const allResults = [...results, currentResult];
+                  onUpdate({
+                    content: partial.content,
+                    details: makeDetails("chain")(allResults),
+                  });
+                }
               }
-            }
             : undefined;
 
           const result = await runSingleAgent(
@@ -550,11 +602,23 @@ Use the subagent tool to delegate tasks to these specialized agents when appropr
           );
           results.push(result);
 
-          const isError = result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted";
+          const isError =
+            result.exitCode !== 0 ||
+            result.stopReason === "error" ||
+            result.stopReason === "aborted";
           if (isError) {
-            const errorMsg = result.errorMessage || result.stderr || getFinalOutput(result.messages) || "(no output)";
+            const errorMsg =
+              result.errorMessage ||
+              result.stderr ||
+              getFinalOutput(result.messages) ||
+              "(no output)";
             return {
-              content: [{ type: "text", text: `Chain stopped at step ${i + 1} (${step.agent}): ${errorMsg}` }],
+              content: [
+                {
+                  type: "text",
+                  text: `Chain stopped at step ${i + 1} (${step.agent}): ${errorMsg}`,
+                },
+              ],
               details: makeDetails("chain")(results),
               isError: true,
             };
@@ -562,7 +626,12 @@ Use the subagent tool to delegate tasks to these specialized agents when appropr
           previousOutput = getFinalOutput(result.messages);
         }
         return {
-          content: [{ type: "text", text: getFinalOutput(results[results.length - 1].messages) || "(no output)" }],
+          content: [
+            {
+              type: "text",
+              text: getFinalOutput(results[results.length - 1].messages) || "(no output)",
+            },
+          ],
           details: makeDetails("chain")(results),
         };
       }
@@ -592,7 +661,15 @@ Use the subagent tool to delegate tasks to these specialized agents when appropr
             exitCode: -1, // -1 = still running
             messages: [],
             stderr: "",
-            usage: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0, contextTokens: 0, turns: 0 },
+            usage: {
+              input: 0,
+              output: 0,
+              cacheRead: 0,
+              cacheWrite: 0,
+              cost: 0,
+              contextTokens: 0,
+              turns: 0,
+            },
           };
         }
 
@@ -602,35 +679,42 @@ Use the subagent tool to delegate tasks to these specialized agents when appropr
             const done = allResults.filter((r) => r.exitCode !== -1).length;
             onUpdate({
               content: [
-                { type: "text", text: `Parallel: ${done}/${allResults.length} done, ${running} running...` },
+                {
+                  type: "text",
+                  text: `Parallel: ${done}/${allResults.length} done, ${running} running...`,
+                },
               ],
               details: makeDetails("parallel")([...allResults]),
             });
           }
         };
 
-        const results = await mapWithConcurrencyLimit(params.tasks, MAX_CONCURRENCY, async (t, index) => {
-          const result = await runSingleAgent(
-            ctx.cwd,
-            agents,
-            t.agent,
-            t.task,
-            t.cwd,
-            undefined,
-            signal,
-            // Per-task update callback
-            (partial) => {
-              if (partial.details?.results[0]) {
-                allResults[index] = partial.details.results[0];
-                emitParallelUpdate();
-              }
-            },
-            makeDetails("parallel"),
-          );
-          allResults[index] = result;
-          emitParallelUpdate();
-          return result;
-        });
+        const results = await mapWithConcurrencyLimit(
+          params.tasks,
+          MAX_CONCURRENCY,
+          async (t, index) => {
+            const result = await runSingleAgent(
+              ctx.cwd,
+              agents,
+              t.agent,
+              t.task,
+              t.cwd,
+              undefined,
+              signal,
+              // Per-task update callback
+              (partial) => {
+                if (partial.details?.results[0]) {
+                  allResults[index] = partial.details.results[0];
+                  emitParallelUpdate();
+                }
+              },
+              makeDetails("parallel"),
+            );
+            allResults[index] = result;
+            emitParallelUpdate();
+            return result;
+          },
+        );
 
         const successCount = results.filter((r) => r.exitCode === 0).length;
         const summaries = results.map((r) => {
@@ -661,11 +745,18 @@ Use the subagent tool to delegate tasks to these specialized agents when appropr
           onUpdate,
           makeDetails("single"),
         );
-        const isError = result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted";
+        const isError =
+          result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted";
         if (isError) {
-          const errorMsg = result.errorMessage || result.stderr || getFinalOutput(result.messages) || "(no output)";
+          const errorMsg =
+            result.errorMessage ||
+            result.stderr ||
+            getFinalOutput(result.messages) ||
+            "(no output)";
           return {
-            content: [{ type: "text", text: `Agent ${result.stopReason || "failed"}: ${errorMsg}` }],
+            content: [
+              { type: "text", text: `Agent ${result.stopReason || "failed"}: ${errorMsg}` },
+            ],
             details: makeDetails("single")([result]),
             isError: true,
           };
@@ -686,39 +777,51 @@ Use the subagent tool to delegate tasks to these specialized agents when appropr
     renderCall(args, theme) {
       const scope: AgentScope = args.agentScope ?? "user";
       if (args.chain && args.chain.length > 0) {
-        let text = theme.fg("toolTitle", theme.bold("subagent "))
-          + theme.fg("accent", `chain (${args.chain.length} steps)`)
-          + theme.fg("muted", ` [${scope}]`);
+        let text =
+          theme.fg("toolTitle", theme.bold("subagent ")) +
+          theme.fg("accent", `chain (${args.chain.length} steps)`) +
+          theme.fg("muted", ` [${scope}]`);
         for (let i = 0; i < Math.min(args.chain.length, 3); i++) {
           const step = args.chain[i];
           // Clean up {previous} placeholder for display
           const cleanTask = step.task.replace(/\{previous\}/g, "").trim();
           const preview = cleanTask.length > 40 ? `${cleanTask.slice(0, 40)}...` : cleanTask;
-          text += "\n  "
-            + theme.fg("muted", `${i + 1}.`)
-            + " "
-            + theme.fg("accent", step.agent)
-            + theme.fg("dim", ` ${preview}`);
+          text +=
+            "\n  " +
+            theme.fg("muted", `${i + 1}.`) +
+            " " +
+            theme.fg("accent", step.agent) +
+            theme.fg("dim", ` ${preview}`);
         }
-        if (args.chain.length > 3) text += `\n  ${theme.fg("muted", `... +${args.chain.length - 3} more`)}`;
+        if (args.chain.length > 3) {
+          text += `\n  ${theme.fg("muted", `... +${args.chain.length - 3} more`)}`;
+        }
         return new Text(text, 0, 0);
       }
       if (args.tasks && args.tasks.length > 0) {
-        let text = theme.fg("toolTitle", theme.bold("subagent "))
-          + theme.fg("accent", `parallel (${args.tasks.length} tasks)`)
-          + theme.fg("muted", ` [${scope}]`);
+        let text =
+          theme.fg("toolTitle", theme.bold("subagent ")) +
+          theme.fg("accent", `parallel (${args.tasks.length} tasks)`) +
+          theme.fg("muted", ` [${scope}]`);
         for (const t of args.tasks.slice(0, 3)) {
           const preview = t.task.length > 40 ? `${t.task.slice(0, 40)}...` : t.task;
           text += `\n  ${theme.fg("accent", t.agent)}${theme.fg("dim", ` ${preview}`)}`;
         }
-        if (args.tasks.length > 3) text += `\n  ${theme.fg("muted", `... +${args.tasks.length - 3} more`)}`;
+        if (args.tasks.length > 3) {
+          text += `\n  ${theme.fg("muted", `... +${args.tasks.length - 3} more`)}`;
+        }
         return new Text(text, 0, 0);
       }
       const agentName = args.agent || "...";
-      const preview = args.task ? (args.task.length > 60 ? `${args.task.slice(0, 60)}...` : args.task) : "...";
-      let text = theme.fg("toolTitle", theme.bold("subagent "))
-        + theme.fg("accent", agentName)
-        + theme.fg("muted", ` [${scope}]`);
+      const preview = args.task
+        ? args.task.length > 60
+          ? `${args.task.slice(0, 60)}...`
+          : args.task
+        : "...";
+      let text =
+        theme.fg("toolTitle", theme.bold("subagent ")) +
+        theme.fg("accent", agentName) +
+        theme.fg("muted", ` [${scope}]`);
       text += `\n  ${theme.fg("dim", preview)}`;
       return new Text(text, 0, 0);
     },
@@ -757,9 +860,10 @@ Use the subagent tool to delegate tasks to these specialized agents when appropr
 
         if (expanded) {
           const container = new Container();
-          let header = `${icon} ${theme.fg("toolTitle", theme.bold(r.agent))}${
-            theme.fg("muted", ` (${r.agentSource})`)
-          }`;
+          let header = `${icon} ${theme.fg("toolTitle", theme.bold(r.agent))}${theme.fg(
+            "muted",
+            ` (${r.agentSource})`,
+          )}`;
           if (isError && r.stopReason) header += ` ${theme.fg("error", `[${r.stopReason}]`)}`;
           container.addChild(new Text(header, 0, 0));
           if (isError && r.errorMessage) {
@@ -777,7 +881,8 @@ Use the subagent tool to delegate tasks to these specialized agents when appropr
               if (item.type === "toolCall") {
                 container.addChild(
                   new Text(
-                    theme.fg("muted", "→ ") + formatToolCall(item.name, item.args, theme.fg.bind(theme)),
+                    theme.fg("muted", "→ ") +
+                      formatToolCall(item.name, item.args, theme.fg.bind(theme)),
                     0,
                     0,
                   ),
@@ -803,7 +908,9 @@ Use the subagent tool to delegate tasks to these specialized agents when appropr
         else if (displayItems.length === 0) text += `\n${theme.fg("muted", "(no output)")}`;
         else {
           text += `\n${renderDisplayItems(displayItems, COLLAPSED_ITEM_COUNT)}`;
-          if (displayItems.length > COLLAPSED_ITEM_COUNT) text += `\n${theme.fg("muted", "(Ctrl+O to expand)")}`;
+          if (displayItems.length > COLLAPSED_ITEM_COUNT) {
+            text += `\n${theme.fg("muted", "(Ctrl+O to expand)")}`;
+          }
         }
         const usageStr = formatUsageStats(r.usage, r.model);
         if (usageStr) text += `\n${theme.fg("dim", usageStr)}`;
@@ -825,16 +932,19 @@ Use the subagent tool to delegate tasks to these specialized agents when appropr
 
       if (details.mode === "chain") {
         const successCount = details.results.filter((r) => r.exitCode === 0).length;
-        const icon = successCount === details.results.length ? theme.fg("success", "✓") : theme.fg("error", "✗");
+        const icon =
+          successCount === details.results.length
+            ? theme.fg("success", "✓")
+            : theme.fg("error", "✗");
 
         if (expanded) {
           const container = new Container();
           container.addChild(
             new Text(
-              icon
-                + " "
-                + theme.fg("toolTitle", theme.bold("chain "))
-                + theme.fg("accent", `${successCount}/${details.results.length} steps`),
+              icon +
+                " " +
+                theme.fg("toolTitle", theme.bold("chain ")) +
+                theme.fg("accent", `${successCount}/${details.results.length} steps`),
               0,
               0,
             ),
@@ -853,14 +963,17 @@ Use the subagent tool to delegate tasks to these specialized agents when appropr
                 0,
               ),
             );
-            container.addChild(new Text(theme.fg("muted", "Task: ") + theme.fg("dim", r.task), 0, 0));
+            container.addChild(
+              new Text(theme.fg("muted", "Task: ") + theme.fg("dim", r.task), 0, 0),
+            );
 
             // Show tool calls
             for (const item of displayItems) {
               if (item.type === "toolCall") {
                 container.addChild(
                   new Text(
-                    theme.fg("muted", "→ ") + formatToolCall(item.name, item.args, theme.fg.bind(theme)),
+                    theme.fg("muted", "→ ") +
+                      formatToolCall(item.name, item.args, theme.fg.bind(theme)),
                     0,
                     0,
                   ),
@@ -887,10 +1000,11 @@ Use the subagent tool to delegate tasks to these specialized agents when appropr
         }
 
         // Collapsed view
-        let text = icon
-          + " "
-          + theme.fg("toolTitle", theme.bold("chain "))
-          + theme.fg("accent", `${successCount}/${details.results.length} steps`);
+        let text =
+          icon +
+          " " +
+          theme.fg("toolTitle", theme.bold("chain ")) +
+          theme.fg("accent", `${successCount}/${details.results.length} steps`);
         for (const r of details.results) {
           const rIcon = r.exitCode === 0 ? theme.fg("success", "✓") : theme.fg("error", "✗");
           const displayItems = getDisplayItems(r.messages);
@@ -912,8 +1026,8 @@ Use the subagent tool to delegate tasks to these specialized agents when appropr
         const icon = isRunning
           ? theme.fg("warning", "⏳")
           : failCount > 0
-          ? theme.fg("warning", "◐")
-          : theme.fg("success", "✓");
+            ? theme.fg("warning", "◐")
+            : theme.fg("success", "✓");
         const status = isRunning
           ? `${successCount + failCount}/${details.results.length} done, ${running} running`
           : `${successCount}/${details.results.length} tasks`;
@@ -937,14 +1051,17 @@ Use the subagent tool to delegate tasks to these specialized agents when appropr
             container.addChild(
               new Text(`${theme.fg("muted", "─── ") + theme.fg("accent", r.agent)} ${rIcon}`, 0, 0),
             );
-            container.addChild(new Text(theme.fg("muted", "Task: ") + theme.fg("dim", r.task), 0, 0));
+            container.addChild(
+              new Text(theme.fg("muted", "Task: ") + theme.fg("dim", r.task), 0, 0),
+            );
 
             // Show tool calls
             for (const item of displayItems) {
               if (item.type === "toolCall") {
                 container.addChild(
                   new Text(
-                    theme.fg("muted", "→ ") + formatToolCall(item.name, item.args, theme.fg.bind(theme)),
+                    theme.fg("muted", "→ ") +
+                      formatToolCall(item.name, item.args, theme.fg.bind(theme)),
                     0,
                     0,
                   ),
@@ -973,11 +1090,12 @@ Use the subagent tool to delegate tasks to these specialized agents when appropr
         // Collapsed view (or still running)
         let text = `${icon} ${theme.fg("toolTitle", theme.bold("parallel "))}${theme.fg("accent", status)}`;
         for (const r of details.results) {
-          const rIcon = r.exitCode === -1
-            ? theme.fg("warning", "⏳")
-            : r.exitCode === 0
-            ? theme.fg("success", "✓")
-            : theme.fg("error", "✗");
+          const rIcon =
+            r.exitCode === -1
+              ? theme.fg("warning", "⏳")
+              : r.exitCode === 0
+                ? theme.fg("success", "✓")
+                : theme.fg("error", "✗");
           const displayItems = getDisplayItems(r.messages);
           text += `\n\n${theme.fg("muted", "─── ")}${theme.fg("accent", r.agent)} ${rIcon}`;
           if (displayItems.length === 0) {

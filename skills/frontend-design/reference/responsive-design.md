@@ -65,7 +65,10 @@ body {
 **Enable viewport-fit** in your meta tag:
 
 ```html
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, viewport-fit=cover"
+/>
 ```
 
 ## Responsive Images: Get It Right
@@ -75,14 +78,10 @@ body {
 ```html
 <img
   src="hero-800.jpg"
-  srcset="
-    hero-400.jpg 400w,
-    hero-800.jpg 800w,
-    hero-1200.jpg 1200w
-  "
+  srcset="hero-400.jpg 400w, hero-800.jpg 800w, hero-1200.jpg 1200w"
   sizes="(max-width: 768px) 100vw, 50vw"
   alt="Hero image"
->
+/>
 ```
 
 **How it works**:
@@ -97,9 +96,9 @@ When you need different crops/compositions (not just resolutions):
 
 ```html
 <picture>
-  <source media="(min-width: 768px)" srcset="wide.jpg">
-  <source media="(max-width: 767px)" srcset="tall.jpg">
-  <img src="fallback.jpg" alt="...">
+  <source media="(min-width: 768px)" srcset="wide.jpg" />
+  <source media="(max-width: 767px)" srcset="tall.jpg" />
+  <img src="fallback.jpg" alt="..." />
 </picture>
 ```
 
