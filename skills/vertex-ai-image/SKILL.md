@@ -24,12 +24,12 @@ export GOOGLE_CLOUD_API_KEY=your-key-here  # Also supported
 
 ## Models
 
-| Task | Model ID | Description |
-|---|---|---|
-| Generation (default) | `gemini-3.1-flash-image-preview` | Nano Banana 2 — fast, balanced cost/quality |
-| Generation (pro) | `gemini-3-pro-image-preview` | Nano Banana Pro — professional assets, complex instructions |
-| Generation (fast) | `gemini-2.5-flash-image` | Nano Banana — high-volume, low-latency |
-| Image reading | `gemini-2.5-flash` | Text understanding model |
+| Task                 | Model ID                         | Description                                                 |
+| -------------------- | -------------------------------- | ----------------------------------------------------------- |
+| Generation (default) | `gemini-3.1-flash-image-preview` | Nano Banana 2 — fast, balanced cost/quality                 |
+| Generation (pro)     | `gemini-3-pro-image-preview`     | Nano Banana Pro — professional assets, complex instructions |
+| Generation (fast)    | `gemini-2.5-flash-image`         | Nano Banana — high-volume, low-latency                      |
+| Image reading        | `gemini-2.5-flash`               | Text understanding model                                    |
 
 ## Commands
 
@@ -86,6 +86,7 @@ uv run --script scripts/vertex_ai_image.py generate \
 ```
 
 Options:
+
 - `--prompt, -p` — Text prompt (required)
 - `--output, -o` — Output file path (default: `$XDG_CACHE_HOME/vertex-ai-images/generate-{ts}-{slug}.png`)
 - `--model, -m` — Model ID (default: `gemini-3.1-flash-image-preview`)
@@ -129,6 +130,7 @@ uv run --script scripts/vertex_ai_image.py edit \
 ```
 
 Options:
+
 - `--prompt, -p` — Edit instruction (required)
 - `--image, -i` — Input image path or `gs://` URI (required, repeatable up to 14 times)
 - `--output, -o` — Output file path (default: `$XDG_CACHE_HOME/vertex-ai-images/edit-{ts}-{slug}.png`)
@@ -153,6 +155,7 @@ uv run --script scripts/vertex_ai_image.py read \
 ```
 
 Options:
+
 - `--image, -i` — Local path or `gs://` URI (required)
 - `--prompt, -p` — Question about the image (default: "Describe this image in detail.")
 - `--model, -m` — Model ID (default: `gemini-2.5-flash`)
@@ -160,13 +163,13 @@ Options:
 
 ## Aspect Ratios & Resolutions
 
-| Aspect Ratio | 512 | 1K | 2K | 4K |
-|---|---|---|---|---|
-| 1:1 | 512×512 | 1024×1024 | 2048×2048 | 4096×4096 |
-| 16:9 | 688×384 | 1376×768 | 2752×1536 | 5504×3072 |
-| 9:16 | 384×688 | 768×1376 | 1536×2752 | 3072×5504 |
-| 3:2 | 632×424 | 1264×848 | 2528×1696 | 5056×3392 |
-| 4:3 | 600×448 | 1200×896 | 2400×1792 | 4800×3584 |
+| Aspect Ratio | 512     | 1K        | 2K        | 4K        |
+| ------------ | ------- | --------- | --------- | --------- |
+| 1:1          | 512×512 | 1024×1024 | 2048×2048 | 4096×4096 |
+| 16:9         | 688×384 | 1376×768  | 2752×1536 | 5504×3072 |
+| 9:16         | 384×688 | 768×1376  | 1536×2752 | 3072×5504 |
+| 3:2          | 632×424 | 1264×848  | 2528×1696 | 5056×3392 |
+| 4:3          | 600×448 | 1200×896  | 2400×1792 | 4800×3584 |
 
 > `512` resolution is only available on `gemini-3.1-flash-image-preview`.
 > `gemini-2.5-flash-image` outputs 1024px only and does not support `--size`.

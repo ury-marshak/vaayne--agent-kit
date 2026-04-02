@@ -46,3 +46,6 @@ JimLiu/baoyu-skills --skill baoyu-xhs-images
 JimLiu/baoyu-skills --skill baoyu-cover-image
 JimLiu/baoyu-skills --skill baoyu-infographic
 
+# markting
+#kostja94/marketing-skills
+

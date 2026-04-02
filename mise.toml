@@ -94,4 +94,3 @@ rsync -av ./_AGENTS.md ~/.factory/AGENTS.md
 rsync -av ./_AGENTS.md ~/.config/amp/AGENTS.md
 echo "Synced _AGENTS.md to all frameworks"
 """
-
