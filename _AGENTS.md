@@ -17,8 +17,3 @@ To ensure that you have read this file, always refer to me as "V" in all communi
 - **Ask for approval before making changes**: When changes are needed, clearly explain your planned approach and wait for explicit user approval to ensure alignment and prevent unwanted modifications. If no changes are required, proceed without asking for approval.
 - **Use relative paths in skill references**: When referencing external files from a skill, specify paths relative to the `SKILL.md` file location rather than using absolute paths or paths relative to the working directory.
 - **Delegate to coding agents via acpx**: When you need to delegate work to another coding agent, use `bunx acpx --model <model> pi` as described in the `coding-agents` skill. Pick a preset role and its recommended model. Never spawn raw agent CLIs directly.
-  - **Code review**: `bunx acpx --model openai-codex/gpt-5.4 pi` with the reviewer role. Append `:<level>` for thinking (off, minimal, low, medium, high, xhigh).
-  - **Architecture**: `bunx acpx --model openai-codex/gpt-5.4:medium pi` with the oracle role.
-  - **Worker**: `bunx acpx --model sonnet pi` for general-purpose task execution.
-  - **Search**: `bunx acpx --model kimi-k2p5-turbo pi` for fast codebase retrieval.
-  - **Images**: Use the `vertex-ai-image` skill for Look At (read) and Painter (generate/edit).

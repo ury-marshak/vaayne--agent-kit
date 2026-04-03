@@ -9,7 +9,7 @@ The source/loader system builds a page tree and page lookup from virtual files. 
 Creates a Source object from virtual pages and metas:
 
 ```typescript
-import { source } from "fumadocs-core/source"
+import { source } from "fumadocs-core/source";
 
 const s = source({
   pages: [
@@ -26,7 +26,7 @@ const s = source({
       data: { title: "Docs", pages: ["getting-started", "api"] },
     },
   ],
-})
+});
 ```
 
 ### VirtualPage
@@ -112,14 +112,14 @@ docs.serializePageTree(tree)                 // Serialize for client
 Merge multiple sources (e.g., docs + blog):
 
 ```typescript
-import { multiple } from "fumadocs-core/source"
+import { multiple } from "fumadocs-core/source";
 
 const combined = multiple({
   docs: docsSource,
   blog: blogSource,
-})
+});
 
-const all = loader(combined, { baseUrl: "/" })
+const all = loader(combined, { baseUrl: "/" });
 // Pages have `type` field: "docs" | "blog"
 ```
 
@@ -128,14 +128,14 @@ const all = loader(combined, { baseUrl: "/" })
 Mutate source in-place (e.g., for access control):
 
 ```typescript
-import { update } from "fumadocs-core/source"
+import { update } from "fumadocs-core/source";
 
 const filtered = update(s)
   .page((page) => {
-    if (page.data.private) return null // Remove page
-    return page
+    if (page.data.private) return null; // Remove page
+    return page;
   })
-  .build()
+  .build();
 ```
 
 ## Loader Plugins
@@ -143,67 +143,79 @@ const filtered = update(s)
 ```typescript
 const myPlugin: LoaderPlugin = {
   name: "my-plugin",
-  enforce: "pre",  // or "post"
+  enforce: "pre", // or "post"
   transformStorage({ storage }) {
     // Modify virtual filesystem
   },
   transformPageTree: {
-    file(node, filePath) { return node },
-    folder(node, folderPath) { return node },
-    root(node) { return node },
+    file(node, filePath) {
+      return node;
+    },
+    folder(node, folderPath) {
+      return node;
+    },
+    root(node) {
+      return node;
+    },
   },
-}
+};
 
-loader(s, { baseUrl: "/docs", plugins: [myPlugin] })
+loader(s, { baseUrl: "/docs", plugins: [myPlugin] });
 ```
 
 ## Page Tree Structure
 
 ```typescript
 interface Root {
-  name: ReactNode
-  children: Node[]
+  name: ReactNode;
+  children: Node[];
 }
 
-type Node = Item | Separator | Folder
+type Node = Item | Separator | Folder;
 
 interface Item {
-  type: "page"
-  name: ReactNode
-  url: string
-  icon?: ReactNode
-  external?: boolean
+  type: "page";
+  name: ReactNode;
+  url: string;
+  icon?: ReactNode;
+  external?: boolean;
 }
 
 interface Folder {
-  type: "folder"
-  name: ReactNode
-  children: Node[]
-  index?: Item
-  defaultOpen?: boolean
-  collapsible?: boolean
+  type: "folder";
+  name: ReactNode;
+  children: Node[];
+  index?: Item;
+  defaultOpen?: boolean;
+  collapsible?: boolean;
 }
 
 interface Separator {
-  type: "separator"
-  name?: ReactNode
+  type: "separator";
+  name?: ReactNode;
 }
 ```
 
 ### Tree Utilities
 
 ```typescript
-import { flattenTree, visit, findPath, findNeighbour } from "fumadocs-core/page-tree"
+import {
+  flattenTree,
+  visit,
+  findPath,
+  findNeighbour,
+} from "fumadocs-core/page-tree";
 
-flattenTree(root)              // All pages as flat array
-visit(root, fn)                // Traverse tree
-findPath(root, url)            // Breadcrumb path to URL
-findNeighbour(root, node)      // { prev?, next? } for pagination
+flattenTree(root); // All pages as flat array
+visit(root, fn); // Traverse tree
+findPath(root, url); // Breadcrumb path to URL
+findNeighbour(root, node); // { prev?, next? } for pagination
 ```
 
 ## This Project's Source Setup
 
 `web/src/lib/source.ts`:
+
 - Uses `import.meta.glob("/src/content/docs/**/*.md", { query: "?raw", eager: true })` to discover all .md files
 - Parses frontmatter to extract title/description
 - Loads `meta.json` files for ordering

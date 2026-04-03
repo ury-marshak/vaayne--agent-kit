@@ -3,28 +3,28 @@
 ## CSS Setup (Tailwind v4)
 
 ```css
-@import 'tailwindcss';
-@import 'fumadocs-ui/css/<theme>.css';  /* color preset */
-@import 'fumadocs-ui/css/preset.css';   /* base styles + animations */
+@import "tailwindcss";
+@import "fumadocs-ui/css/<theme>.css"; /* color preset */
+@import "fumadocs-ui/css/preset.css"; /* base styles + animations */
 ```
 
 For shadcn compatibility: `@import 'fumadocs-ui/css/shadcn.css'` instead of a theme preset.
 
 ## Preset Themes
 
-| Theme | Style |
-|---|---|
-| `neutral` | Gray scale (default) |
-| `black` | Pure black/white |
-| `vitepress` | VitePress-inspired green |
-| `dusk` | Warm dark purple |
-| `catppuccin` | Catppuccin palette |
-| `ocean` | Blue ocean tones |
-| `purple` | Purple accent |
-| `solar` | Warm golden |
-| `emerald` | Green earth tones |
-| `ruby` | Red accent |
-| `aspen` | Warm green (nature) |
+| Theme        | Style                    |
+| ------------ | ------------------------ |
+| `neutral`    | Gray scale (default)     |
+| `black`      | Pure black/white         |
+| `vitepress`  | VitePress-inspired green |
+| `dusk`       | Warm dark purple         |
+| `catppuccin` | Catppuccin palette       |
+| `ocean`      | Blue ocean tones         |
+| `purple`     | Purple accent            |
+| `solar`      | Warm golden              |
+| `emerald`    | Green earth tones        |
+| `ruby`       | Red accent               |
+| `aspen`      | Warm green (nature)      |
 
 ## fd-* Color Tokens
 
@@ -76,8 +76,8 @@ These are constant across light/dark:
 
 ```css
 :root {
-  --fd-layout-width: 1400px;  /* Max layout width */
-  --fd-nav-height: 56px;      /* Navigation bar height */
+  --fd-layout-width: 1400px; /* Max layout width */
+  --fd-nav-height: 56px; /* Navigation bar height */
 }
 ```
 
@@ -93,11 +93,11 @@ Set `dir="rtl"` on `<body>` and pass `dir="rtl"` to `RootProvider`.
 
 In `web/src/styles.css`, the fd-* tokens are mapped to the warm editorial palette:
 
-| Token | Maps to | Value |
-|---|---|---|
-| `fd-background` | ivory | `oklch(0.97 0.01 80)` |
-| `fd-foreground` | ink | `oklch(0.15 0.01 60)` |
-| `fd-primary` | terracotta | `oklch(0.55 0.12 45)` |
-| `fd-border` | rule | `oklch(0.85 0.01 75 / 60%)` |
-| `fd-muted` | cream | `oklch(0.94 0.015 75)` |
-| `fd-muted-foreground` | graphite | `oklch(0.40 0.01 60)` |
+| Token                 | Maps to    | Value                       |
+| --------------------- | ---------- | --------------------------- |
+| `fd-background`       | ivory      | `oklch(0.97 0.01 80)`       |
+| `fd-foreground`       | ink        | `oklch(0.15 0.01 60)`       |
+| `fd-primary`          | terracotta | `oklch(0.55 0.12 45)`       |
+| `fd-border`           | rule       | `oklch(0.85 0.01 75 / 60%)` |
+| `fd-muted`            | cream      | `oklch(0.94 0.015 75)`      |
+| `fd-muted-foreground` | graphite   | `oklch(0.40 0.01 60)`       |

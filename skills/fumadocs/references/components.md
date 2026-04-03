@@ -5,16 +5,16 @@
 ### DocsLayout
 
 ```tsx
-import { DocsLayout } from "fumadocs-ui/layouts/docs"
+import { DocsLayout } from "fumadocs-ui/layouts/docs";
 
 <DocsLayout
-  tree={pageTree}           // Root from loader
+  tree={pageTree} // Root from loader
   nav={{ title: "Docs", url: "/docs" }}
   links={[{ text: "Home", url: "/" }]}
   sidebar={{ defaultOpenLevel: 1, collapsible: true }}
 >
   {children}
-</DocsLayout>
+</DocsLayout>;
 ```
 
 Props: `tree`, `nav`, `links`, `sidebar`, `tabMode`, `tabs`, `containerProps`, `slots`.
@@ -22,13 +22,18 @@ Props: `tree`, `nav`, `links`, `sidebar`, `tabMode`, `tabs`, `containerProps`, `
 ### DocsPage
 
 ```tsx
-import { DocsPage, DocsTitle, DocsDescription, DocsBody } from "fumadocs-ui/page"
+import {
+  DocsPage,
+  DocsTitle,
+  DocsDescription,
+  DocsBody,
+} from "fumadocs-ui/page";
 
 <DocsPage>
   <DocsTitle>Page Title</DocsTitle>
   <DocsDescription>Subtitle text.</DocsDescription>
   <DocsBody>{content}</DocsBody>
-</DocsPage>
+</DocsPage>;
 ```
 
 Props: `editOnGithub`, `lastUpdate`, `children`.
@@ -38,7 +43,7 @@ Props: `editOnGithub`, `lastUpdate`, `children`.
 Framework-specific wrapper. For TanStack Start:
 
 ```tsx
-import { RootProvider } from "fumadocs-ui/provider/tanstack"
+import { RootProvider } from "fumadocs-ui/provider/tanstack";
 ```
 
 Other frameworks: `fumadocs-ui/provider` (Next.js), `fumadocs-ui/provider/react-router`.
@@ -48,7 +53,7 @@ Other frameworks: `fumadocs-ui/provider` (Next.js), `fumadocs-ui/provider/react-
 Minimal navbar + search for non-docs pages:
 
 ```tsx
-import { HomeLayout } from "fumadocs-ui/layouts/home"
+import { HomeLayout } from "fumadocs-ui/layouts/home";
 ```
 
 ## Content Components
@@ -56,13 +61,13 @@ import { HomeLayout } from "fumadocs-ui/layouts/home"
 ### Tabs
 
 ```tsx
-import { Tab, Tabs } from "fumadocs-ui/components/tabs"
+import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 
 <Tabs items={["npm", "pnpm", "yarn"]} groupId="pkg" persist>
   <Tab value="npm">npm install pkg</Tab>
   <Tab value="pnpm">pnpm add pkg</Tab>
   <Tab value="yarn">yarn add pkg</Tab>
-</Tabs>
+</Tabs>;
 ```
 
 Props: `items`, `groupId` (sync across instances), `persist` (localStorage), `updateAnchor`.
@@ -70,11 +75,13 @@ Props: `items`, `groupId` (sync across instances), `persist` (localStorage), `up
 ### Accordion
 
 ```tsx
-import { Accordion, Accordions } from "fumadocs-ui/components/accordion"
+import { Accordion, Accordions } from "fumadocs-ui/components/accordion";
 
 <Accordions type="single">
-  <Accordion title="Question?" id="q1">Answer here.</Accordion>
-</Accordions>
+  <Accordion title="Question?" id="q1">
+    Answer here.
+  </Accordion>
+</Accordions>;
 ```
 
 Supports hash navigation via `id` prop.
@@ -82,12 +89,12 @@ Supports hash navigation via `id` prop.
 ### Steps
 
 ```tsx
-import { Step, Steps } from "fumadocs-ui/components/steps"
+import { Step, Steps } from "fumadocs-ui/components/steps";
 
 <Steps>
   <Step>First step content</Step>
   <Step>Second step content</Step>
-</Steps>
+</Steps>;
 ```
 
 Or use Tailwind utilities directly: `fd-steps` on wrapper, `fd-step` on children.
@@ -95,11 +102,11 @@ Or use Tailwind utilities directly: `fd-steps` on wrapper, `fd-step` on children
 ### CodeBlock
 
 ```tsx
-import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock"
+import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
 
 <CodeBlock title="example.ts" lang="typescript">
   <Pre>{code}</Pre>
-</CodeBlock>
+</CodeBlock>;
 ```
 
 Features: copy button, title bar, icon, `keepBackground` for Shiki colors.
@@ -109,19 +116,19 @@ Features: copy button, title bar, icon, `keepBackground` for Shiki colors.
 Client-side highlighting for runtime content:
 
 ```tsx
-import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock"
+import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 
-<DynamicCodeBlock lang="json" code={jsonString} />
+<DynamicCodeBlock lang="json" code={jsonString} />;
 ```
 
 ### Banner
 
 ```tsx
-import { Banner } from "fumadocs-ui/components/banner"
+import { Banner } from "fumadocs-ui/components/banner";
 
 <Banner id="v2-release" variant="rainbow">
   Version 2.0 is out!
-</Banner>
+</Banner>;
 ```
 
 Dismissible when `id` is set (persists to localStorage).
@@ -129,52 +136,54 @@ Dismissible when `id` is set (persists to localStorage).
 ### InlineTOC
 
 ```tsx
-import { InlineTOC } from "fumadocs-ui/components/inline-toc"
+import { InlineTOC } from "fumadocs-ui/components/inline-toc";
 
-<InlineTOC items={tocItems} />
+<InlineTOC items={tocItems} />;
 ```
 
 ### ImageZoom
 
 ```tsx
-import { ImageZoom } from "fumadocs-ui/components/image-zoom"
+import { ImageZoom } from "fumadocs-ui/components/image-zoom";
 
-<ImageZoom src="/screenshot.png" alt="Screenshot" />
+<ImageZoom src="/screenshot.png" alt="Screenshot" />;
 ```
 
 ### Files
 
 ```tsx
-import { Files, File, Folder } from "fumadocs-ui/components/files"
+import { Files, File, Folder } from "fumadocs-ui/components/files";
 
 <Files>
   <Folder name="src" defaultOpen>
     <File name="index.ts" />
     <File name="utils.ts" />
   </Folder>
-</Files>
+</Files>;
 ```
 
 ### TypeTable
 
 ```tsx
-import { TypeTable } from "fumadocs-ui/components/type-table"
+import { TypeTable } from "fumadocs-ui/components/type-table";
 
-<TypeTable type={{
-  name: { type: "string", description: "The name", default: "'default'" },
-  count: { type: "number", description: "Item count" },
-}} />
+<TypeTable
+  type={{
+    name: { type: "string", description: "The name", default: "'default'" },
+    count: { type: "number", description: "Item count" },
+  }}
+/>;
 ```
 
 ### Cards
 
 ```tsx
-import { Card, Cards } from "fumadocs-ui/components/card"
+import { Card, Cards } from "fumadocs-ui/components/card";
 
 <Cards>
   <Card title="Getting Started" href="/docs" />
   <Card title="API Reference" href="/docs/api" />
-</Cards>
+</Cards>;
 ```
 
 ### Callout

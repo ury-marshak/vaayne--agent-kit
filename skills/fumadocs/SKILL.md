@@ -42,6 +42,7 @@ This project uses fumadocs with **TanStack Start** (not Next.js):
 ## meta.json
 
 Controls page ordering per directory:
+
 ```json
 {
   "title": "Section Name",
@@ -53,14 +54,14 @@ Special syntax: `"---"` (separator), `"[Name](url)"` (external link), `"...folde
 
 ## Key UI Components
 
-| Component | Import | Purpose |
-|---|---|---|
-| `DocsLayout` | `fumadocs-ui/layouts/docs` | Sidebar + nav wrapper |
-| `DocsPage` | `fumadocs-ui/page` | Page container with TOC |
-| `DocsTitle` | `fumadocs-ui/page` | Page heading |
-| `DocsDescription` | `fumadocs-ui/page` | Page subtitle |
-| `DocsBody` | `fumadocs-ui/page` | Prose content area |
-| `RootProvider` | `fumadocs-ui/provider/tanstack` | Root wrapper (TanStack) |
+| Component         | Import                          | Purpose                 |
+| ----------------- | ------------------------------- | ----------------------- |
+| `DocsLayout`      | `fumadocs-ui/layouts/docs`      | Sidebar + nav wrapper   |
+| `DocsPage`        | `fumadocs-ui/page`              | Page container with TOC |
+| `DocsTitle`       | `fumadocs-ui/page`              | Page heading            |
+| `DocsDescription` | `fumadocs-ui/page`              | Page subtitle           |
+| `DocsBody`        | `fumadocs-ui/page`              | Prose content area      |
+| `RootProvider`    | `fumadocs-ui/provider/tanstack` | Root wrapper (TanStack) |
 
 For more components (Tabs, Accordion, Steps, CodeBlock, Cards, Banner, etc.), read `references/components.md`.
 
