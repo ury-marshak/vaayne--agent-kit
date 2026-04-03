@@ -1,3 +1,5 @@
 # Ignore session scratch space
 .agents/sessions/*/tmp/
 .venv/
+*.log
+

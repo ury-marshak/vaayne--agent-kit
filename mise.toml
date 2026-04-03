@@ -11,23 +11,40 @@ echo "Setup complete"
 [tasks.format]
 description = "Format code using dprint"
 run = """
-# uvx ruff check --fix
-# Format other supported files using dprint
 dprint fmt
 """
 
 [tasks.sync]
 description = "Sync components to various local agent frameworks"
-depends = [
-  "sync:skills",
-  "sync:agents",
-  "sync:pi",
-]
+depends = ["sync:skills", "sync:agents"]
 
 [tasks."sync:skills"]
 description = "Sync all skills (local + remote) to ~/.agents/skills"
-depends = ["sync:impeccable", "sync:skills:local", "sync:skills:remote"]
-run = "mise run format"
+depends = ["sync:impeccable"]
+run = """
+mkdir -p ~/.agents/skills
+rsync -avL --delete ./skills/ ~/.agents/skills/ --exclude remote-skills.txt
+
+# Install remote skills from registry
+if [ -f ./skills/remote-skills.txt ]; then
+  while IFS= read -r line; do
+    line=$(echo "$line" | sed 's/#.*//' | xargs)
+    [ -z "$line" ] && continue
+    echo "Installing: mh skills add $line"
+    (cd ~ && mh skills add $line)
+  done < ./skills/remote-skills.txt
+  echo "Remote skills synced"
+fi
+
+# Claude reads skills from ~/.claude/skills — symlink to shared location
+if [ -d ~/.claude/skills ] && [ ! -L ~/.claude/skills ]; then
+  rm -rf ~/.claude/skills
+fi
+ln -sfn ~/.agents/skills ~/.claude/skills
+
+mise run format
+echo "Synced all skills to ~/.agents/skills"
+"""
 
 [tasks."sync:impeccable"]
 description = "Clone/update pbakaus/impeccable and save skills locally"
@@ -62,41 +79,6 @@ done
 echo "Saved steering commands to $DEST/frontend-improver/references/"
 """
 
-[tasks."sync:skills:local"]
-description = "Sync local skills to ~/.agents/skills"
-run = """
-mkdir -p ~/.agents/skills
-rsync -avL ./skills/ ~/.agents/skills/ --exclude remote-skills.txt
-
-# Claude reads skills from ~/.claude/skills — symlink to shared location
-if [ -d ~/.claude/skills ] && [ ! -L ~/.claude/skills ]; then
-  rm -rf ~/.claude/skills
-fi
-ln -sfn ~/.agents/skills ~/.claude/skills
-
-echo "Synced local skills to ~/.agents/skills"
-"""
-
-[tasks."sync:skills:remote"]
-description = "Install remote skills from skills/remote-skills.txt"
-run = """
-if [ ! -f ./skills/remote-skills.txt ]; then
-  echo "No remote-skills.txt found, skipping"
-  exit 0
-fi
-
-# Run mh from HOME so skills install to ~/.agents/skills (not project-local)
-while IFS= read -r line; do
-  # Skip blank lines and comments
-  line=$(echo "$line" | sed 's/#.*//' | xargs)
-  [ -z "$line" ] && continue
-  echo "Installing: mh skills add $line"
-  (cd ~ && mh skills add $line)
-done < ./skills/remote-skills.txt
-
-echo "Remote skills synced"
-"""
-
 [tasks."sync:agents"]
 description = "Sync _AGENTS.md to all agent frameworks"
 run = """
@@ -106,12 +88,4 @@ rsync -av ./_AGENTS.md ~/.claude/CLAUDE.md
 rsync -av ./_AGENTS.md ~/.factory/AGENTS.md
 rsync -av ./_AGENTS.md ~/.config/amp/AGENTS.md
 echo "Synced _AGENTS.md to all frameworks"
-"""
-
-[tasks."sync:pi"]
-description = "Sync Pi extensions to ~/.pi/agent"
-run = """
-mkdir -p ~/.pi/agent/extensions
-rsync -av ./extensions/*.ts ~/.pi/agent/extensions/ || true
-echo "Synced Pi extensions to ~/.pi/agent"
 """

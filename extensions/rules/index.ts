@@ -50,10 +50,7 @@ export default function rulesExtension(pi: ExtensionAPI) {
     if (scanResult.rules.length > 0) {
       const sources = new Set(scanResult.rules.map((r) => r.source));
       const sourceList = [...sources].join(", ");
-      ctx.ui.notify(
-        `Found ${scanResult.rules.length} rule(s) from: ${sourceList}`,
-        "info",
-      );
+      ctx.ui.notify(`Found ${scanResult.rules.length} rule(s) from: ${sourceList}`, "info");
     }
   });
 

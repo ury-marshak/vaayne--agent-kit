@@ -102,9 +102,7 @@ export default function mcpExtension(pi: ExtensionAPI) {
     async execute(_toolCallId, _params, _onUpdate, _ctx, _signal) {
       if (!(await ensureConnected()) || backendTools.length === 0) {
         return {
-          content: [
-            { type: "text", text: "MCP not connected or no tools available" },
-          ],
+          content: [{ type: "text", text: "MCP not connected or no tools available" }],
           details: {},
           isError: true,
         };
@@ -117,9 +115,7 @@ export default function mcpExtension(pi: ExtensionAPI) {
         .join("\n");
 
       return {
-        content: [
-          { type: "text", text: `Available MCP tools:\n\n${toolList}` },
-        ],
+        content: [{ type: "text", text: `Available MCP tools:\n\n${toolList}` }],
         details: { tools: backendTools.map((t) => t.name) },
       };
     },
@@ -176,9 +172,7 @@ export default function mcpExtension(pi: ExtensionAPI) {
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
         return {
-          content: [
-            { type: "text", text: `Error inspecting ${toolName}: ${msg}` },
-          ],
+          content: [{ type: "text", text: `Error inspecting ${toolName}: ${msg}` }],
           details: {},
           isError: true,
         };
@@ -259,9 +253,7 @@ export default function mcpExtension(pi: ExtensionAPI) {
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
         return {
-          content: [
-            { type: "text", text: `Error calling ${toolName}: ${msg}` },
-          ],
+          content: [{ type: "text", text: `Error calling ${toolName}: ${msg}` }],
           details: {},
           isError: true,
         };
@@ -273,11 +265,11 @@ export default function mcpExtension(pi: ExtensionAPI) {
   pi.registerTool({
     name: "mcp_exec",
     label: "MCP Exec",
-    description:
-      `Execute JavaScript code to orchestrate multiple MCP tool calls with logic. IMPORTANT: Before using this tool, read the usage guide at ${EXEC_USAGE_PATH} to understand capabilities and limitations. Use mcp.callTool(name, params) to call tools. Supports async/await, variables, conditionals, loops, and chaining results.`,
+    description: `Execute JavaScript code to orchestrate multiple MCP tool calls with logic. IMPORTANT: Before using this tool, read the usage guide at ${EXEC_USAGE_PATH} to understand capabilities and limitations. Use mcp.callTool(name, params) to call tools. Supports async/await, variables, conditionals, loops, and chaining results.`,
     parameters: Type.Object({
       code: Type.String({
-        description: "JavaScript code to execute. Use mcp.callTool(name, params) to call MCP tools.",
+        description:
+          "JavaScript code to execute. Use mcp.callTool(name, params) to call MCP tools.",
       }),
     }),
 
@@ -295,10 +287,7 @@ export default function mcpExtension(pi: ExtensionAPI) {
       try {
         // Create mcp object for the code to use
         const mcp = {
-          callTool: async (
-            name: string,
-            toolParams: Record<string, unknown> = {},
-          ) => {
+          callTool: async (name: string, toolParams: Record<string, unknown> = {}) => {
             if (!client) {
               throw new Error("MCP client not connected");
             }
@@ -318,10 +307,7 @@ export default function mcpExtension(pi: ExtensionAPI) {
         };
 
         // Execute the code with mcp in scope
-        const asyncFn = new Function(
-          "mcp",
-          `return (async () => { ${code} })()`,
-        );
+        const asyncFn = new Function("mcp", `return (async () => { ${code} })()`);
         const result = await asyncFn(mcp);
 
         const output = result !== undefined ? JSON.stringify(result, null, 2) : "Done";

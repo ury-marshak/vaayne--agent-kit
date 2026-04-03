@@ -296,8 +296,7 @@ export default function webToolsExtension(pi: ExtensionAPI) {
         })
         .join("\n---\n\n");
 
-      const output =
-        `# Search Results for: "${query}"\n\nFound ${response.results.length} results.\n\n${formattedResults}`;
+      const output = `# Search Results for: "${query}"\n\nFound ${response.results.length} results.\n\n${formattedResults}`;
 
       return {
         content: [{ type: "text", text: output }],

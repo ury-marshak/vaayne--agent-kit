@@ -66,10 +66,7 @@ export class MCPClient {
       stderr: "pipe",
     });
 
-    this.client = new Client(
-      { name: "pi-mcp-client", version: VERSION },
-      { capabilities: {} },
-    );
+    this.client = new Client({ name: "pi-mcp-client", version: VERSION }, { capabilities: {} });
 
     await this.client.connect(this.transport);
   }
@@ -116,10 +113,7 @@ export class MCPClient {
     return tools;
   }
 
-  async callTool(
-    name: string,
-    args: Record<string, unknown>,
-  ): Promise<CallToolResult> {
+  async callTool(name: string, args: Record<string, unknown>): Promise<CallToolResult> {
     if (!this.client) throw new Error("Not connected");
     // Call backend tools through MCP Hub's invoke builtin tool
     return this.client.callTool({

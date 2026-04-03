@@ -57,6 +57,7 @@ Required:
 ## Workflow
 
 1. **Resolve library ID** — get the Context7-compatible ID for the library:
+
    ```bash
    mh invoke -u https://mcp.context7.com/mcp -t http resolveLibraryId '{"libraryName": "react", "query": "useState hook examples"}'
    ```

@@ -1,5 +1,9 @@
 Adapt existing designs to work effectively across different contexts - different screen sizes, devices, platforms, or use cases.
 
+## MANDATORY PREPARATION
+
+Invoke {{command_prefix}}frontend-design — it contains design principles, anti-patterns, and the **Context Gathering Protocol**. Follow the protocol before proceeding — if no design context exists yet, you MUST run {{command_prefix}}teach-impeccable first. Additionally gather: target platforms/devices and usage contexts.
+
 ## Assess Adaptation Challenge
 
 Understand what needs adaptation and why:

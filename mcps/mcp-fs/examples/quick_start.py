@@ -260,9 +260,7 @@ def main():
 
         print("\n📚 Next steps:")
         print("   1. Review the README.md for complete documentation")
-        print(
-            "   2. Try running the server: mcp-fs examples/demo_config.json"
-        )
+        print("   2. Try running the server: mcp-fs examples/demo_config.json")
         print("   3. Experiment with different backend configurations")
         print("   4. Integrate with your MCP client application")
 

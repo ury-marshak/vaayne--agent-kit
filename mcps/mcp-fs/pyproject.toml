@@ -7,12 +7,7 @@ authors = [{ name = "Vaayne", email = "liu.vaayne@gmail.com" }]
 license = { file = "LICENSE" }
 requires-python = ">=3.12"
 
-dependencies = [
-  "fastmcp>=2.13.0",
-  "opendal>=0.45.20",
-  "uvicorn>=0.35.0",
-  "click>=8.1.0",
-]
+dependencies = ["fastmcp>=2.13.0", "opendal>=0.45.20", "uvicorn>=0.35.0", "click>=8.1.0"]
 keywords = ["mcp", "filesystem", "opendal", "s3", "webdav"]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -33,12 +28,7 @@ Repository = "https://github.com/vaayne/agent-kit"
 Issues = "https://github.com/vaayne/agent-kit/issues"
 
 [dependency-groups]
-dev = [
-  "ruff>=0.8.0",
-  "mypy>=1.13.0",
-  "pytest>=8.0.0",
-  "pyproject-runner>=0.3",
-]
+dev = ["ruff>=0.8.0", "mypy>=1.13.0", "pytest>=8.0.0", "pyproject-runner>=0.3"]
 
 [tool.uv]
 package = true

@@ -35,7 +35,7 @@ Create systematic improvement plan:
 - Use CDN for faster delivery
 
 ```html
-<img 
+<img
   src="hero.webp"
   srcset="hero-400.webp 400w, hero-800.webp 800w, hero-1200.webp 1200w"
   sizes="(max-width: 400px) 400px, (max-width: 800px) 800px, 1200px"
@@ -95,13 +95,13 @@ const HeavyChart = lazy(() => import("./HeavyChart"));
 
 ```javascript
 // ❌ Bad: Alternating reads and writes (causes reflows)
-elements.forEach(el => {
+elements.forEach((el) => {
   const height = el.offsetHeight; // Read (forces layout)
   el.style.height = height * 2; // Write
 });
 
 // ✅ Good: Batch reads, then batch writes
-const heights = elements.map(el => el.offsetHeight); // All reads
+const heights = elements.map((el) => el.offsetHeight); // All reads
 elements.forEach((el, i) => {
   el.style.height = heights[i] * 2; // All writes
 });
@@ -153,7 +153,7 @@ elements.forEach((el, i) => {
 ```javascript
 // Efficiently detect when elements enter viewport
 const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
+  entries.forEach((entry) => {
     if (entry.isIntersecting) {
       // Element is visible, lazy load or animate
     }

@@ -152,14 +152,7 @@ export async function fetchMarkdown(params: FetchParams): Promise<FetchResult> {
     const document = dom.window.document;
 
     // Remove script, style, nav, footer elements for cleaner output
-    const removeSelectors = [
-      "script",
-      "style",
-      "nav",
-      "footer",
-      "header",
-      "aside",
-    ];
+    const removeSelectors = ["script", "style", "nav", "footer", "header", "aside"];
     for (const selector of removeSelectors) {
       for (const el of document.querySelectorAll(selector)) {
         el.remove();
